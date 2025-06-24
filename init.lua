@@ -207,6 +207,20 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 -- Move row up/down
 -- vim.keymap.set('n', 'K', ':m .-2<CR>==', { noremap = true, silent = true, desc = 'Move line up and reindent' })
 -- vim.keymap.set('n', 'J', ':m .+1<CR>==', { noremap = true, silent = true, desc = 'Move line down and reindent' })
+-- Run GK
+vim.keymap.set('n', '<Leader>rgfp', function()
+  -- Get the SHARED_HOME environment variable
+  local shared_home = os.getenv 'SHARED_HOME'
+
+  -- Construct the full path using the environment variable and correct backslashes for Lua
+  local script_full_path = shared_home .. '\\FBA\\POS_sandbox__7102.bat'
+
+  -- Escape the path for the shell using vim.fn.fnameescape()
+  local escaped_path = vim.fn.fnameescape(script_full_path)
+
+  -- Construct and execute the command
+  vim.cmd('silent !start cmd /k "' .. escaped_path .. '"')
+end, { desc = 'FBA - Run GK POS', noremap = true, silent = true })
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
