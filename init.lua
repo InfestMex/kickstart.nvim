@@ -222,6 +222,13 @@ vim.keymap.set('n', '<Leader>rgfp', function()
   vim.cmd('silent !start cmd /k "' .. escaped_path .. '"')
 end, { desc = 'FBA - Run GK POS', noremap = true, silent = true })
 
+-- custom filetypes
+vim.filetype.add {
+  extension = {
+    dtx = 'xml', -- This tells Neovim to treat .dtx files as 'xml' filetype
+  },
+}
+
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
@@ -757,7 +764,7 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
-        'prettier', -- Generic formatter
+        -- 'prettier', -- Generic formatter
         'lemminx', -- XML - Used to format XML files
         'jdtls', -- Java - Used to handle java files
         'java-test', -- Java - Run Junit
@@ -783,13 +790,34 @@ require('lazy').setup({
       --lemminx needs to be setup latter
       vim.lsp.enable('lemminx', false)
       require('lspconfig').lemminx.setup {
+        filetypes = {
+          'xml',
+          'xsd',
+          'xsl',
+          'xslt',
+          'svg',
+          'dtx',
+        },
         settings = {
           xml = {
+            fileAssociations = {
+              -- Treat .dtx files as XML
+              {
+                pattern = '*.dtx',
+                -- Optionally, specify a systemId or publicId if your .dtx files adhere
+                -- to a specific DTD or XML Schema. Otherwise, you can omit it.
+                -- systemId = "http://example.com/your-dtx-schema.xsd",
+                -- publicId = "-//YOUR_COMPANY//DTD Your DTX Format//EN",
+              },
+              -- Example for other custom XML files (uncomment if needed)
+              -- { pattern = "*.config", systemId = "http://schemas.microsoft.com/.NetConfiguration/v2.0" },
+            },
             format = {
               enabled = true,
               tabSize2 = 2,
               splitAttributes = false,
               preservedNewlines = 5,
+              spaceBeforeEmptyCloseTag = true,
             },
           },
         },
@@ -860,6 +888,7 @@ require('lazy').setup({
         -- You can use 'stop_after_first' to run the first available formatter from the list
         -- javascript = { "prettierd", "prettier", stop_after_first = true },
         xml = { 'lemminx' },
+        dtx = { 'lemminx' },
         json = { 'prettier' },
         -- You can also use 'stop_after_first' to run the first available formatter from the list
         java = { 'prettier', 'jdtls', stop_after_first = true },
