@@ -222,6 +222,35 @@ vim.keymap.set('n', '<Leader>rgfp', function()
   vim.cmd('silent !start cmd /k "' .. escaped_path .. '"')
 end, { desc = 'FBA - Run GK POS', noremap = true, silent = true })
 
+vim.keymap.set('n', '<leader>rodo', function()
+  vim.cmd 'enew' -- Create a new empty buffer
+  vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer
+  vim.cmd 'term /home/viaguila/dev/current/git/xstore/gradlew -i --project-dir /home/viaguila/dev/current/git/xstore :xst_pos:oraclePdbBuildLab' -- Run the command in a terminal
+end, {
+  noremap = true,
+  silent = true,
+  desc = '[R]un [O]racle [D]ataBase [O]racle PDB',
+})
+vim.keymap.set('n', '<leader>rods', function()
+  vim.cmd 'enew' -- Create a new empty buffer
+  vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer
+  vim.cmd 'term /home/viaguila/dev/current/git/xstore/gradlew -i --project-dir /home/viaguila/dev/current/git/xstore :xst_pos:mssqlBuildLab' -- Run the command in a terminal
+end, {
+  noremap = true,
+  silent = true,
+  desc = '[R]un [O]racle [D]ataBase [M]ssql',
+})
+
+vim.keymap.set('n', '<leader>roxc', function()
+  vim.cmd 'enew' -- Create a new empty buffer
+  vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer
+  vim.cmd 'term /home/viaguila/dev/current/git/xstore/gradlew -i --project-dir /home/viaguila/dev/current/git/xstore :xstore-client:ojetServe' -- Run the command in a terminal
+end, {
+  noremap = true,
+  silent = true,
+  desc = '[R]un [O]racle [X]store [C]lient',
+})
+
 -- custom filetypes
 vim.filetype.add {
   extension = {
