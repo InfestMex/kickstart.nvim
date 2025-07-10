@@ -208,6 +208,19 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 -- vim.keymap.set('n', 'K', ':m .-2<CR>==', { noremap = true, silent = true, desc = 'Move line up and reindent' })
 -- vim.keymap.set('n', 'J', ':m .+1<CR>==', { noremap = true, silent = true, desc = 'Move line down and reindent' })
 -- Run GK
+vim.keymap.set('n', '<Leader>rgfm', function()
+  -- Get the SHARED_HOME environment variable
+  local shared_home = os.getenv 'SHARED_HOME'
+
+  -- Construct the full path using the environment variable and correct backslashes for Lua
+  local script_full_path = shared_home .. '\\FBA\\start.bat'
+
+  -- Escape the path for the shell using vim.fn.fnameescape()
+  local escaped_path = vim.fn.fnameescape(script_full_path)
+
+  -- Construct and execute the command
+  vim.cmd(':terminal "' .. escaped_path .. '"')
+end, { desc = 'FBA - Start MVN Shell', noremap = true, silent = true })
 vim.keymap.set('n', '<Leader>rgfp', function()
   -- Get the SHARED_HOME environment variable
   local shared_home = os.getenv 'SHARED_HOME'
@@ -252,6 +265,19 @@ end, {
 })
 
 vim.keymap.set('n', '<leader>yf', ':let @+=expand("%:t")<CR>', { noremap = true, silent = true, desc = 'Copy current file name' })
+vim.keymap.set('n', '<Leader>rgpm', function()
+  -- Get the SHARED_HOME environment variable
+  local shared_home = os.getenv 'SHARED_HOME'
+
+  -- Construct the full path using the environment variable and correct backslashes for Lua
+  local script_full_path = shared_home .. '\\CMX\\start.bat'
+
+  -- Escape the path for the shell using vim.fn.fnameescape()
+  local escaped_path = vim.fn.fnameescape(script_full_path)
+
+  -- Construct and execute the command
+  vim.cmd(':terminal "' .. escaped_path .. '"')
+end, { desc = 'CMX - Start MVN Shell', noremap = true, silent = true })
 vim.keymap.set('n', '<Leader>rgpp', function()
   -- Get the SHARED_HOME environment variable
   local shared_home = os.getenv 'SHARED_HOME'
@@ -422,6 +448,11 @@ require('lazy').setup({
       spec = {
         { '<leader>s', group = '[S]earch' },
         { '<leader>t', group = '[T]oggle' },
+        { '<leader>r', group = '[R]un' },
+        { '<leader>ro', group = '[R]un [O]racle' },
+        { '<leader>rg', group = '[R]un [G]K' },
+        { '<leader>rgf', group = '[R]un [G]K [F]BA' },
+        { '<leader>rgp', group = '[R]un [G]K [P]PG' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
       },
     },
