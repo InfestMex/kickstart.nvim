@@ -946,7 +946,7 @@ require('lazy').setup({
         dtx = { 'lemminx' },
         json = { 'prettier' },
         -- You can also use 'stop_after_first' to run the first available formatter from the list
-        java = { 'prettier', 'jdtls', stop_after_first = true },
+        java = { 'jdtls', stop_after_first = true },
       },
     },
   },
@@ -1107,6 +1107,16 @@ require('lazy').setup({
       --   If not available, we use `mini` as the fallback
       'rcarriga/nvim-notify',
     },
+  },
+
+  {
+    'MeanderingProgrammer/render-markdown.nvim',
+    dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' }, -- if you use the mini.nvim suite
+    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.icons' }, -- if you use standalone mini plugins
+    -- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
+    ---@module 'render-markdown'
+    ---@type render.md.UserConfig
+    opts = {},
   },
 
   {
