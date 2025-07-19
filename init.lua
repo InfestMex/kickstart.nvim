@@ -235,6 +235,10 @@ vim.keymap.set('n', '<Leader>rgfp', function()
   vim.cmd('silent !start cmd /k "' .. escaped_path .. '"')
 end, { desc = 'FBA - Run GK POS', noremap = true, silent = true })
 
+vim.keymap.set('n', '<Leader>rggp', function()
+  vim.cmd ':terminal net start "postgresql-x64-16"'
+end, { desc = '[R]un [G]K [G]eneral Start [P]ostgresql service', noremap = true, silent = true })
+
 vim.keymap.set('n', '<leader>rodo', function()
   vim.cmd 'enew' -- Create a new empty buffer
   vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer
@@ -450,8 +454,11 @@ require('lazy').setup({
         { '<leader>t', group = '[T]oggle' },
         { '<leader>r', group = '[R]un' },
         { '<leader>ro', group = '[R]un [O]racle' },
+        { '<leader>rod', group = '[R]un [O]racle [D]ata base' },
+        { '<leader>rox', group = '[R]un [O]racle [X]store' },
         { '<leader>rg', group = '[R]un [G]K' },
         { '<leader>rgf', group = '[R]un [G]K [F]BA' },
+        { '<leader>rgg', group = '[R]un [G]K [G]eneral' },
         { '<leader>rgp', group = '[R]un [G]K [P]PG' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
       },
@@ -542,7 +549,17 @@ require('lazy').setup({
       local builtin = require 'telescope.builtin'
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
-      vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
+      vim.keymap.set('n', '<leader>sf', function()
+        builtin.find_files {
+          -- Do not filter anything
+          file_ignore_patterns = {},
+          -- Do not ignore hidden files
+          hidden = true,
+          -- Do not ignore .gitignore
+          no_ignore = true,
+          additional_args = { '-u' },
+        }
+      end, { desc = '[S]earch [F]iles' })
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
       vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
       vim.keymap.set('n', '<leader>sg', function()
