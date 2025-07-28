@@ -10,7 +10,8 @@ local bundles = {
 vim.list_extend(bundles, vim.split(vim.fn.glob(home .. '/AppData/Local/nvim-data/mason/share/java-test/*.jar', 1), '\n'))
 
 local config = {
-  cmd = { home .. '/AppData/Local/nvim-data/mason/packages/jdtls/bin/jdtls' },
+  -- cmd = { home .. '/AppData/Local/nvim-data/mason/packages/jdtls/bin/jdtls' },
+  cmd = { home .. '/.local/share/nvim/mason/packages/jdtls/jdtls' },
   root_dir = vim.fs.dirname(vim.fs.find({ 'gradlew', '.git', '.gradle', 'mvnw' }, { upward = true })[1]),
   --[[
   cmd = {
@@ -74,8 +75,8 @@ local config = {
         --   profile = "GoogleStyle",
         -- },
         settings = {
-          url = 'D:/Containers/data/my-tools/ws-java/my-pref.epf',
-          profile = '_xstore',
+          url = '/home/viaguila/dev/xstore_formatter.xml',
+          profile = 'xstore',
         },
       },
       completion = {
