@@ -1103,6 +1103,7 @@ require('lazy').setup({
     end,
   },
 
+  -- A.I.
   -- {
   --   'Exafunction/windsurf.nvim',
   --   dependencies = {
