@@ -207,6 +207,18 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 -- Move row up/down
 -- vim.keymap.set('n', 'K', ':m .-2<CR>==', { noremap = true, silent = true, desc = 'Move line up and reindent' })
 -- vim.keymap.set('n', 'J', ':m .+1<CR>==', { noremap = true, silent = true, desc = 'Move line down and reindent' })
+
+vim.keymap.set('n', '<leader>pvc', ':cd D:/Containers<CR>', {
+  noremap = true,
+  silent = true,
+  desc = '[P]roject [V]ictor [C]ontainers',
+})
+vim.keymap.set('n', '<leader>pvw', ':cd C:/Users/victo/AppData/Local/nvim<CR>', {
+  noremap = true,
+  silent = true,
+  desc = '[P]roject [V]ictor [W]indows Neovim',
+})
+
 -- Run GK
 vim.keymap.set('n', '<Leader>rgfm', function()
   -- Get the SHARED_HOME environment variable
@@ -1120,18 +1132,18 @@ require('lazy').setup({
     end,
   },
 
-  -- {
-  --   'Exafunction/windsurf.nvim',
-  --   dependencies = {
-  --     'nvim-lua/plenary.nvim',
-  --     'hrsh7th/nvim-cmp',
-  --   },
-  --   config = function()
-  --     require('codeium').setup {
-  --       virtual_text = { enabled = true, accept = '<C-y>' },
-  --     }
-  --   end,
-  -- },
+  {
+    'Exafunction/windsurf.nvim',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'hrsh7th/nvim-cmp',
+    },
+    config = function()
+      require('codeium').setup {
+        virtual_text = { enabled = true, accept = '<C-y>' },
+      }
+    end,
+  },
 
   {
     'rcarriga/nvim-dap-ui',
