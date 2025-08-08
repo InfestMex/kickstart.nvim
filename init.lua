@@ -208,6 +208,7 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 -- vim.keymap.set('n', 'K', ':m .-2<CR>==', { noremap = true, silent = true, desc = 'Move line up and reindent' })
 -- vim.keymap.set('n', 'J', ':m .+1<CR>==', { noremap = true, silent = true, desc = 'Move line down and reindent' })
 
+-- Go to project X
 vim.keymap.set('n', '<leader>pvc', ':cd D:/Containers<CR>', {
   noremap = true,
   silent = true,
@@ -217,6 +218,36 @@ vim.keymap.set('n', '<leader>pvw', ':cd C:/Users/victo/AppData/Local/nvim<CR>', 
   noremap = true,
   silent = true,
   desc = '[P]roject [V]ictor [W]indows Neovim',
+})
+vim.keymap.set('n', '<leader>pvl', ':cd ~/.config/nvim<CR>', {
+  noremap = true,
+  silent = true,
+  desc = '[P]roject [V]ictor [L]inux Neovim',
+})
+vim.keymap.set('n', '<leader>poc', ':cd /home/viaguila/dev/current/git/xstore<CR>', {
+  noremap = true,
+  silent = true,
+  desc = '[P]roject [O]racle [C]urrent Xstore',
+})
+vim.keymap.set('n', '<leader>poq', ':cd /home/viaguila/dev/25.0<CR>', {
+  noremap = true,
+  silent = true,
+  desc = '[P]roject [O]racle [q]v25 Xstore',
+})
+vim.keymap.set('n', '<leader>pow', ':cd /home/viaguila/dev/24.0<CR>', {
+  noremap = true,
+  silent = true,
+  desc = '[P]roject [O]racle [w]v24 Xstore',
+})
+vim.keymap.set('n', '<leader>poe', ':cd /home/viaguila/dev/23.0<CR>', {
+  noremap = true,
+  silent = true,
+  desc = '[P]roject [O]racle [e]v23 Xstore',
+})
+vim.keymap.set('n', '<leader>por', ':cd /home/viaguila/dev/22.0<CR>', {
+  noremap = true,
+  silent = true,
+  desc = '[P]roject [O]racle [r]v22 Xstore',
 })
 
 -- Run GK
@@ -278,6 +309,16 @@ end, {
   noremap = true,
   silent = true,
   desc = '[R]un [O]racle [X]store [C]lient',
+})
+
+vim.keymap.set('n', '<leader>roxbc', function()
+  vim.cmd 'enew' -- Create a new empty buffer
+  vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer
+  vim.cmd 'term /home/viaguila/dev/current/git/xstore/gradlew -i --project-dir /home/viaguila/dev/current/git/xstore :countrypack:build' -- Run the command in a terminal
+end, {
+  noremap = true,
+  silent = true,
+  desc = '[R]un [O]racle [X]store [B]uild [C]ountrypack',
 })
 
 vim.keymap.set('n', '<leader>yf', ':let @+=expand("%:t")<CR>', { noremap = true, silent = true, desc = 'Copy current file name' })
@@ -462,6 +503,9 @@ require('lazy').setup({
 
       -- Document existing key chains
       spec = {
+        { '<leader>p', group = '[P]roject' },
+        { '<leader>po', group = '[P]roject [O]racle' },
+        { '<leader>pv', group = '[P]roject [V]ictor' },
         { '<leader>s', group = '[S]earch' },
         { '<leader>t', group = '[T]oggle' },
         { '<leader>r', group = '[R]un' },
@@ -1004,7 +1048,7 @@ require('lazy').setup({
         -- javascript = { "prettierd", "prettier", stop_after_first = true },
         xml = { 'lemminx' },
         dtx = { 'lemminx' },
-        json = { 'prettier' },
+        json = { 'prettier', 'jq' },
         -- You can also use 'stop_after_first' to run the first available formatter from the list
         java = { 'jdtls', stop_after_first = true },
       },
@@ -1178,6 +1222,46 @@ require('lazy').setup({
     ---@module 'render-markdown'
     ---@type render.md.UserConfig
     opts = {},
+  },
+
+  {
+    'stevearc/oil.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    config = function()
+      CustomOilBar = function()
+        local path = vim.fn.expand '%'
+        path = path:gsub('oil://', '')
+
+        return '  ' .. vim.fn.fnamemodify(path, ':.')
+      end
+
+      require('oil').setup {
+        columns = { 'icon' },
+        keymaps = {
+          ['<C-h>'] = false,
+          ['<C-l>'] = false,
+          ['<C-k>'] = false,
+          ['<C-j>'] = false,
+          ['<M-h>'] = 'actions.select_split',
+        },
+        win_options = {
+          winbar = '%{v:lua.CustomOilBar()}',
+        },
+        view_options = {
+          show_hidden = true,
+          is_always_hidden = function(name, _)
+            local folder_skip = { 'dev-tools.locks', 'dune.lock', '_build' }
+            return vim.tbl_contains(folder_skip, name)
+          end,
+        },
+      }
+
+      -- Open parent directory in current window
+      vim.keymap.set('n', '-', '<CMD>Oil<CR>', { desc = 'Open parent directory' })
+
+      -- Open parent directory in floating window
+      vim.keymap.set('n', '<space>-', require('oil').toggle_float)
+    end,
   },
 
   {
