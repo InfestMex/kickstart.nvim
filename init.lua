@@ -215,7 +215,7 @@ vim.keymap.set('n', '<leader>pvc', ':cd D:/Containers<CR>', {
   silent = true,
   desc = '[P]roject [V]ictor [C]ontainers',
 })
-vim.keymap.set('n', '<leader>pvw', ':cd C:/Users/victo/AppData/Local/nvim<CR>', {
+vim.keymap.set('n', '<leader>pvw', ':cd ~/AppData/Local/nvim<CR>', {
   noremap = true,
   silent = true,
   desc = '[P]roject [V]ictor [W]indows Neovim',
@@ -250,6 +250,16 @@ vim.keymap.set('n', '<leader>por', ':cd /home/viaguila/dev/22.0<CR>', {
   silent = true,
   desc = '[P]roject [O]racle [r]v22 Xstore',
 })
+vim.keymap.set('n', '<leader>pgfp', ':cd C:\\DEV_HOME\\FBA\\ws-pos\\git<CR>', {
+  noremap = true,
+  silent = true,
+  desc = '[P]roject [G]K [F]BA [P]OS',
+})
+vim.keymap.set('n', '<leader>pgfc', ':cd C:\\DEV_HOME\\FBA\\ws-cen\\git<CR>', {
+  noremap = true,
+  silent = true,
+  desc = '[P]roject [G]K [F]BA [C]entral',
+})
 
 -- Run GK
 vim.keymap.set('n', '<Leader>rgfm', function()
@@ -257,30 +267,53 @@ vim.keymap.set('n', '<Leader>rgfm', function()
   local shared_home = os.getenv 'SHARED_HOME'
 
   -- Construct the full path using the environment variable and correct backslashes for Lua
-  local script_full_path = shared_home .. '\\FBA\\start.bat'
+  local script_full_path = shared_home .. '/FBA/start.sh'
 
   -- Escape the path for the shell using vim.fn.fnameescape()
   local escaped_path = vim.fn.fnameescape(script_full_path)
 
+  local git_bash_path = string.gsub(script_full_path, 'C:', '/c')
+
+  -- Construct the command to be executed by bash
+  local command_to_run = 'source ' .. git_bash_path .. '; exec bash'
+
+  -- Ensure bash terminal configuration
+  vim.cmd ':setlocal shellcmdflag=-c'
+
+  -- vertical split
+  vim.cmd 'vsp'
+
   -- Construct and execute the command
-  vim.cmd(':terminal "' .. escaped_path .. '"')
+  -- terminal "source /c/DEV_HOME/FBA/start.sh; exec bash"
+  vim.cmd(':terminal "' .. command_to_run .. '"')
 end, { desc = 'FBA - Start MVN Shell', noremap = true, silent = true })
 vim.keymap.set('n', '<Leader>rgfp', function()
   -- Get the SHARED_HOME environment variable
   local shared_home = os.getenv 'SHARED_HOME'
 
   -- Construct the full path using the environment variable and correct backslashes for Lua
-  local script_full_path = shared_home .. '\\FBA\\POS_sandbox__7102.bat'
+  local script_full_path = shared_home .. '/FBA/POS_sandbox__7102.sh'
 
-  -- Escape the path for the shell using vim.fn.fnameescape()
+  -- Escape the path for the shell using vim.fnufnameescape()
   local escaped_path = vim.fn.fnameescape(script_full_path)
 
+  local git_bash_path = string.gsub(script_full_path, 'C:', '/c')
+
+  -- Construct the command to be executed by bash
+  local command_to_run = git_bash_path
+
+  -- Ensure bash terminal configuration
+  vim.cmd ':setlocal shellcmdflag=-c'
+
   -- Construct and execute the command
-  vim.cmd('silent !start cmd /k "' .. escaped_path .. '"')
+  vim.cmd(':terminal "' .. command_to_run .. '"')
 end, { desc = 'FBA - Run GK POS', noremap = true, silent = true })
 
 vim.keymap.set('n', '<Leader>rggp', function()
-  vim.cmd ':terminal net start "postgresql-x64-16"'
+  -- Ensure bash terminal configuration
+  vim.cmd ':setlocal shellcmdflag=-c'
+
+  vim.cmd ':terminal "net start "postgresql-x64-16""'
 end, { desc = '[R]un [G]K [G]eneral Start [P]ostgresql service', noremap = true, silent = true })
 
 vim.keymap.set('n', '<leader>rodo', function()
@@ -1178,18 +1211,18 @@ require('lazy').setup({
   },
 
   -- A.I.
-  -- {
-  --   'Exafunction/windsurf.nvim',
-  --   dependencies = {
-  --     'nvim-lua/plenary.nvim',
-  --     'hrsh7th/nvim-cmp',
-  --   },
-  --   config = function()
-  --     require('codeium').setup {
-  --       virtual_text = { enabled = true, accept = '<C-y>' },
-  --     }
-  --   end,
-  -- },
+  {
+    'Exafunction/windsurf.nvim',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'hrsh7th/nvim-cmp',
+    },
+    config = function()
+      require('codeium').setup {
+        virtual_text = { enabled = true, accept = '<C-y>' },
+      }
+    end,
+  },
 
   {
     'rcarriga/nvim-dap-ui',
