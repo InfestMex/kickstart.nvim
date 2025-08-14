@@ -163,6 +163,7 @@ vim.opt.confirm = true
 
 -- other custom options
 vim.opt.wrap = false
+vim.opt_local.conceallevel = 2
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
@@ -229,12 +230,12 @@ vim.keymap.set('n', '<leader>poc', ':cd /home/viaguila/dev/current/git/xstore<CR
   silent = true,
   desc = '[P]roject [O]racle [C]urrent Xstore',
 })
-vim.keymap.set('n', '<leader>poq', ':cd /home/viaguila/dev/25.0<CR>', {
+vim.keymap.set('n', '<leader>poq', ':cd /home/viaguila/dev/25.0/git/xstore<CR>', {
   noremap = true,
   silent = true,
   desc = '[P]roject [O]racle [q]v25 Xstore',
 })
-vim.keymap.set('n', '<leader>pow', ':cd /home/viaguila/dev/24.0<CR>', {
+vim.keymap.set('n', '<leader>pow', ':cd /home/viaguila/dev/24.0/git/xstore<CR>', {
   noremap = true,
   silent = true,
   desc = '[P]roject [O]racle [w]v24 Xstore',
@@ -1189,41 +1190,6 @@ require('lazy').setup({
   --     }
   --   end,
   -- },
-
-  {
-    'epwalsh/obsidian.nvim',
-    version = '*', -- recommended, use latest release instead of latest commit
-    lazy = true,
-    ft = 'markdown',
-    -- Replace the above line with this if you only want to load obsidian.nvim for markdown files in your vault:
-    -- event = {
-    --   -- If you want to use the home shortcut '~' here you need to call 'vim.fn.expand'.
-    --   -- E.g. "BufReadPre " .. vim.fn.expand "~" .. "/my-vault/*.md"
-    --   -- refer to `:h file-pattern` for more examples
-    --   "BufReadPre path/to/my-vault/*.md",
-    --   "BufNewFile path/to/my-vault/*.md",
-    -- },
-    dependencies = {
-      -- Required.
-      'nvim-lua/plenary.nvim',
-
-      -- see below for full list of optional dependencies 👇
-    },
-    opts = {
-      workspaces = {
-        {
-          name = 'General',
-          path = '/d/obsidian/General',
-        },
-        {
-          name = 'Oracle',
-          path = '~/Documents/Obsidian Vault',
-        },
-      },
-
-      -- see below for full list of options 👇
-    },
-  },
 
   {
     'rcarriga/nvim-dap-ui',
