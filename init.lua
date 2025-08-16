@@ -164,6 +164,7 @@ vim.opt.confirm = true
 -- other custom options
 vim.opt.wrap = false
 vim.opt_local.conceallevel = 2
+vim.opt.shiftwidth = 2
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
@@ -540,6 +541,7 @@ require('lazy').setup({
         { '<leader>p', group = '[P]roject' },
         { '<leader>po', group = '[P]roject [O]racle' },
         { '<leader>pv', group = '[P]roject [V]ictor' },
+        { '<leader>pg', group = '[P]roject [G]k' },
         { '<leader>s', group = '[S]earch' },
         { '<leader>t', group = '[T]oggle' },
         { '<leader>r', group = '[R]un' },
