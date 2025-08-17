@@ -1,5 +1,6 @@
 local wk = require 'which-key'
 vim.defer_fn(function()
+  -- Define menu groups
   wk.add {
     { '<leader>p', group = '[P]roject' },
     { '<leader>po', group = '[P]roject [O]racle' },
@@ -74,23 +75,6 @@ vim.keymap.set('n', '<leader>pgfc', ':cd C:\\DEV_HOME\\FBA\\ws-cen\\git<CR>', {
   desc = '[P]roject [G]K [F]BA [C]entral',
 })
 
-function get_test_runner(test_name, debug)
-  if debug then
-    return 'gradlew -i --project-dir /home/viaguila/dev/current/git/xstore testDebug --tests ' .. test_name
-  end
-  return 'gradlew -i --project-dir /home/viaguila/dev/current/git/xstore test --tests ' .. test_name
-end
-
-function run_java_test_method(debug)
-  local utils = require 'utils'
-  local method_name = utils.get_current_full_method_name '\\#'
-  vim.cmd(':terminal ' .. get_test_runner(method_name, debug))
-end
-
-vim.keymap.set('n', '<leader>tm', function()
-  run_java_test_method()
-end)
-
 -- Run GK
 vim.keymap.set('n', '<Leader>rgfm', function()
   -- Get the SHARED_HOME environment variable
@@ -98,9 +82,6 @@ vim.keymap.set('n', '<Leader>rgfm', function()
 
   -- Construct the full path using the environment variable and correct backslashes for Lua
   local script_full_path = shared_home .. '/FBA/start.sh'
-
-  -- Escape the path for the shell using vim.fn.fnameescape()
-  local escaped_path = vim.fn.fnameescape(script_full_path)
 
   local git_bash_path = string.gsub(script_full_path, 'C:', '/c')
 
@@ -124,9 +105,6 @@ vim.keymap.set('n', '<Leader>rgfp', function()
 
   -- Construct the full path using the environment variable and correct backslashes for Lua
   local script_full_path = shared_home .. '/FBA/POS_sandbox__7102.sh'
-
-  -- Escape the path for the shell using vim.fnufnameescape()
-  local escaped_path = vim.fn.fnameescape(script_full_path)
 
   local git_bash_path = string.gsub(script_full_path, 'C:', '/c')
 
@@ -214,3 +192,64 @@ vim.keymap.set('n', '<Leader>rgpp', function()
   -- Construct and execute the command
   vim.cmd('silent !start cmd /k "' .. escaped_path .. '"')
 end, { desc = 'CMX - Run GK POS', noremap = true, silent = true })
+
+-- Java specific keymaps
+
+function get_test_runner(test_name, debug)
+  if not test_name or test_name == '' then
+    vim.notify('Test name is missing!', vim.log.levels.WARN, { title = 'Test Runner' })
+    return nil -- or an empty string "", or a default command
+  end
+
+  if debug then
+    return 'gradlew -i --project-dir /home/viaguila/dev/current/git/xstore testDebug --tests ' .. test_name
+  else
+    return 'gradlew -i --project-dir /home/viaguila/dev/current/git/xstore test --tests ' .. test_name
+  end
+end
+
+function run_java_test_method(debug)
+  local utils = require 'utils'
+  local test_name = utils.get_java_full_method_name '.'
+  local test_runner = get_test_runner(test_name, debug)
+  if test_runner then
+    -- Ensure bash terminal configuration
+    vim.cmd ':setlocal shellcmdflag=-c'
+
+    vim.cmd(':terminal ' .. test_runner)
+  end
+end
+
+function run_java_test_class(debug)
+  local utils = require 'utils'
+  local test_name = utils.get_java_full_class_name()
+  local test_runner = get_test_runner(test_name, debug)
+  if test_runner then
+    -- Ensure bash terminal configuration
+    vim.cmd ':setlocal shellcmdflag=-c'
+
+    vim.cmd(':terminal ' .. test_runner)
+  end
+end
+
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'java',
+  callback = function()
+    -- Keymap to run the current JUnit test class
+    vim.keymap.set('n', '<leader>jtc', function()
+      run_java_test_class(false)
+    end, { desc = '[J]ava Run [T]est [C]lass', buffer = true })
+
+    -- Keymap to run the current JUnit test method
+    -- TODO: not working
+    vim.keymap.set('n', '<leader>jtm', function()
+      run_java_test_method(false)
+    end, { desc = '[J]ava Run [T]est [M]ethod', buffer = true })
+
+    -- Keymap to debug the current JUnit test method
+    -- TODO: not working
+    vim.keymap.set('n', '<leader>jdm', function()
+      run_java_test_method(true) -- Pass 'true' for debug mode
+    end, { desc = '[J]ava [D]ebug Test [M]ethod', buffer = true })
+  end,
+})
