@@ -453,7 +453,9 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sf', function()
         builtin.find_files {
           -- Do not filter anything
-          file_ignore_patterns = {},
+          file_ignore_patterns = {
+            '%.class$', -- Explicitly ignore .class files
+          },
           -- Do not ignore hidden files
           hidden = true,
           -- Do not ignore .gitignore
@@ -466,7 +468,9 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sg', function()
         builtin.live_grep {
           -- Do not filter anything
-          file_ignore_patterns = {},
+          file_ignore_patterns = {
+            '%.class$', -- Explicitly ignore .class files
+          },
           -- Do not ignore hidden files
           hidden = true,
           -- Do not ignore .gitignore
