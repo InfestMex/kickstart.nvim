@@ -201,10 +201,21 @@ function get_test_runner(test_name, debug)
     return nil -- or an empty string "", or a default command
   end
 
+  -- get current dir
+  -- local script_full_path = vim.fn.getcwd()
+
+  -- Get prefix to get the gradlew path
+  -- local git_bash_path = string.gsub(script_full_path, 'D:', '/d')
+  -- git_bash_path = string.gsub(git_bash_path, '\\', '/')
+
+  local gradle_path = ''
+  -- One option can be to use a specific directory,like this:
+  -- return 'gradlew -i --project-dir /home/viaguila/dev/current/git/xstore test --tests ' .. test_name
+
   if debug then
-    return 'gradlew -i --project-dir /home/viaguila/dev/current/git/xstore testDebug --tests ' .. test_name
+    return '"' .. gradle_path .. './gradlew testDebug --tests ' .. test_name .. '"'
   else
-    return 'gradlew -i --project-dir /home/viaguila/dev/current/git/xstore test --tests ' .. test_name
+    return '"' .. gradle_path .. './gradlew test --tests ' .. test_name .. '"'
   end
 end
 
@@ -215,6 +226,11 @@ function run_java_test_method(debug)
   if test_runner then
     -- Ensure bash terminal configuration
     vim.cmd ':setlocal shellcmdflag=-c'
+
+    vim.cmd 'enew' -- Create a new empty buffer
+    vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer
+
+    vim.notify('Command to use: ' .. test_runner, vim.log.levels.WARN, { title = 'Java test' })
 
     vim.cmd(':terminal ' .. test_runner)
   end
@@ -227,6 +243,11 @@ function run_java_test_class(debug)
   if test_runner then
     -- Ensure bash terminal configuration
     vim.cmd ':setlocal shellcmdflag=-c'
+
+    vim.cmd 'enew' -- Create a new empty buffer
+    vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer
+
+    vim.notify('Command to use: ' .. test_runner, vim.log.levels.WARN, { title = 'Java test' })
 
     vim.cmd(':terminal ' .. test_runner)
   end
