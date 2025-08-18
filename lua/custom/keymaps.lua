@@ -201,22 +201,28 @@ function get_test_runner(test_name, debug)
     return nil -- or an empty string "", or a default command
   end
 
-  -- get current dir
-  -- local script_full_path = vim.fn.getcwd()
+  -- TODO: Debug logic is missing
 
-  -- Get prefix to get the gradlew path
-  -- local git_bash_path = string.gsub(script_full_path, 'D:', '/d')
-  -- git_bash_path = string.gsub(git_bash_path, '\\', '/')
+  -- Define the program and its arguments as a list (table)
+  local executable = './gradlew'
+  local args = {
+    'test',
+    '--info',
+    '--tests',
+    test_name,
+  }
 
-  local gradle_path = ''
-  -- One option can be to use a specific directory,like this:
-  -- return 'gradlew -i --project-dir /home/viaguila/dev/current/git/xstore test --tests ' .. test_name
-
-  if debug then
-    return '"' .. gradle_path .. './gradlew testDebug --tests ' .. test_name .. '"'
-  else
-    return '"' .. gradle_path .. './gradlew test --tests ' .. test_name .. '"'
+  -- Let Neovim escape each part correctly for the current shell
+  local escaped_executable = vim.fn.fnameescape(executable)
+  local escaped_args = {}
+  for _, arg in ipairs(args) do
+    table.insert(escaped_args, vim.fn.shellescape(arg))
   end
+
+  -- Join them into a final command string
+  local command = table.concat(vim.list_extend({ escaped_executable }, escaped_args), ' ')
+
+  return command
 end
 
 function run_java_test_method(debug)
