@@ -195,7 +195,7 @@ end, { desc = 'CMX - Run GK POS', noremap = true, silent = true })
 
 -- Java specific keymaps
 
-function get_test_runner(test_name, debug)
+function get_test_runner(project_name, test_name, debug)
   if not test_name or test_name == '' then
     vim.notify('Test name is missing!', vim.log.levels.WARN, { title = 'Test Runner' })
     return nil -- or an empty string "", or a default command
@@ -206,7 +206,7 @@ function get_test_runner(test_name, debug)
   -- Define the program and its arguments as a list (table)
   local executable = './gradlew'
   local args = {
-    'test',
+    project_name .. ':test',
     '--info',
     '--tests',
     test_name,
@@ -228,7 +228,8 @@ end
 function run_java_test_method(debug)
   local utils = require 'utils'
   local test_name = utils.get_java_full_method_name '.'
-  local test_runner = get_test_runner(test_name, debug)
+  local project_name = utils.get_java_project_name()
+  local test_runner = get_test_runner(project_name, test_name, debug)
   if test_runner then
     -- Ensure bash terminal configuration
     vim.cmd ':setlocal shellcmdflag=-c'
@@ -245,7 +246,8 @@ end
 function run_java_test_class(debug)
   local utils = require 'utils'
   local test_name = utils.get_java_full_class_name()
-  local test_runner = get_test_runner(test_name, debug)
+  local project_name = utils.get_java_project_name()
+  local test_runner = get_test_runner(project_name, test_name, debug)
   if test_runner then
     -- Ensure bash terminal configuration
     vim.cmd ':setlocal shellcmdflag=-c'

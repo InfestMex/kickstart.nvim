@@ -136,6 +136,37 @@ function M.get_java_full_class_name()
   return nil
 end
 
+---Get java full class name
+---@return string|nil
+function M.get_java_project_name()
+  -- Check if the current file is a Java file
+  if vim.bo.filetype ~= 'java' then
+    return nil
+  end
+
+  local file_path = vim.api.nvim_buf_get_name(0)
+  local cwd = vim.fn.getcwd()
+
+  -- Ensure both paths use / as separator
+  file_path = file_path:gsub('\\', '/')
+  cwd = cwd:gsub('\\', '/')
+
+  -- Remove cwd prefix from file path
+  local rel_path = file_path:match('^' .. vim.pesc(cwd) .. '/(.*)')
+  if not rel_path then
+    vim.notify('File is not in current working directory', vim.log.levels.WARN, { title = 'Custom Utils' })
+    return nil
+  end
+
+  local project_name = rel_path:match '([^/\\]+)'
+  if not project_name then
+    vim.notify('Unable to determine project name', vim.log.levels.WARN, { title = 'Custom Utils' })
+    return nil
+  end
+
+  return project_name
+end
+
 ---Get java full method name
 ---@param delimiter string
 ---@return string|nil
