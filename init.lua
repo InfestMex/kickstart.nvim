@@ -165,6 +165,8 @@ vim.opt.confirm = true
 vim.opt.wrap = false
 vim.opt_local.conceallevel = 2
 vim.opt.shiftwidth = 2
+vim.opt.ignorecase = true
+vim.opt.smartcase = true
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
@@ -1473,7 +1475,7 @@ require('lazy').setup({
         desc = 'Goto Declaration',
       },
       {
-        'gr',
+        'gR',
         function()
           Snacks.picker.lsp_references()
         end,
