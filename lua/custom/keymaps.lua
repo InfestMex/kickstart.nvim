@@ -77,19 +77,30 @@ vim.keymap.set('n', '<leader>pgfc', ':cd C:\\DEV_HOME\\FBA\\ws-cen\\git<CR>', {
 
 -- Run GK
 vim.keymap.set('n', '<Leader>rgfm', function()
-  -- Get the SHARED_HOME environment variable
-  local shared_home = os.getenv 'SHARED_HOME'
+  -- TODO: move this in to a lua logic
+
+  local config_path = vim.fn.stdpath 'config'
+  -- vim.notify('Config folder = ' .. config_path, vim.log.levels.WARN, { title = 'GK commands' })
 
   -- Construct the full path using the environment variable and correct backslashes for Lua
-  local script_full_path = shared_home .. '/FBA/start.sh'
+  local script_full_path = config_path .. '/custom/files/gk/FBA/start.sh'
 
-  local git_bash_path = string.gsub(script_full_path, 'C:', '/c')
+  -- local git_bash_path = string.gsub(script_full_path, 'C:', '/c')
+  local git_bash_path = vim.fn.fnameescape(script_full_path)
+  -- git_bash_path = string.gsub(git_bash_path, 'C:', '/c')
+  -- git_bash_path = string.gsub(git_bash_path, '\\', '/')
+
+  if vim.fn.filereadable(git_bash_path) ~= 1 then
+    vim.notify('File do not exist path = ' .. git_bash_path, vim.log.levels.ERROR, { title = 'GK commands' })
+  end
 
   -- Construct the command to be executed by bash
-  local command_to_run = 'source ' .. git_bash_path .. '; exec bash'
+  -- local command_to_run = 'source ' .. git_bash_path .. '; exec bash'
+  local command_to_run = 'bash -l -c ' .. git_bash_path
+  vim.notify('Command to run = ' .. command_to_run, vim.log.levels.WARN, { title = 'GK commands' })
 
   -- Ensure bash terminal configuration
-  vim.cmd ':setlocal shellcmdflag=-c'
+  vim.cmd 'setlocal shellcmdflag=-c'
 
   -- vertical split
   vim.cmd 'vsp'
@@ -97,33 +108,46 @@ vim.keymap.set('n', '<Leader>rgfm', function()
   -- Construct and execute the command
   -- terminal "source /c/DEV_HOME/FBA/start.sh; exec bash"
   vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer
-  vim.cmd(':terminal "' .. command_to_run .. '"')
+  vim.cmd('terminal! "' .. command_to_run .. '"')
 end, { desc = 'FBA - Start MVN Shell', noremap = true, silent = true })
+
 vim.keymap.set('n', '<Leader>rgfp', function()
-  -- Get the SHARED_HOME environment variable
-  local shared_home = os.getenv 'SHARED_HOME'
+  -- TODO: move this in to a lua logic
+
+  local config_path = vim.fn.stdpath 'config'
+  -- vim.notify('Config folder = ' .. config_path, vim.log.levels.WARN, { title = 'GK commands' })
 
   -- Construct the full path using the environment variable and correct backslashes for Lua
-  local script_full_path = shared_home .. '/FBA/POS_sandbox__7102.sh'
+  local script_full_path = config_path .. '/custom/files/gk/FBA/POS_sandbox__7102.sh'
+  -- vim.notify('Full path = ' .. script_full_path, vim.log.levels.WARN, { title = 'GK commands' })
 
-  local git_bash_path = string.gsub(script_full_path, 'C:', '/c')
+  local git_bash_path = vim.fn.fnameescape(script_full_path)
+  -- vim.notify('Git-bash path = ' .. git_bash_path, vim.log.levels.WARN, { title = 'GK commands' })
+
+  if vim.fn.filereadable(git_bash_path) ~= 1 then
+    vim.notify('File do not exist path = ' .. git_bash_path, vim.log.levels.ERROR, { title = 'GK commands' })
+  end
 
   -- Construct the command to be executed by bash
   local command_to_run = git_bash_path
+  vim.notify('Command to run = ' .. command_to_run, vim.log.levels.WARN, { title = 'GK commands' })
 
   -- Ensure bash terminal configuration
-  vim.cmd ':setlocal shellcmdflag=-c'
+  vim.cmd 'setlocal shellcmdflag=-c'
+
+  -- vertical split
+  vim.cmd 'vsp'
 
   -- Construct and execute the command
   vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer
-  vim.cmd(':terminal "' .. command_to_run .. '"')
+  vim.cmd('terminal ' .. command_to_run)
 end, { desc = 'FBA - Run GK POS', noremap = true, silent = true })
 
 vim.keymap.set('n', '<Leader>rggp', function()
   -- Ensure bash terminal configuration
-  vim.cmd ':setlocal shellcmdflag=-c'
+  vim.cmd 'setlocal shellcmdflag=-c'
   vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer
-  vim.cmd ':terminal "net start "postgresql-x64-16""'
+  vim.cmd 'terminal "net start "postgresql-x64-16""'
 end, { desc = '[R]un [G]K [G]eneral Start [P]ostgresql service', noremap = true, silent = true })
 
 vim.keymap.set('n', '<leader>rodo', function()
