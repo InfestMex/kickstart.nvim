@@ -181,12 +181,12 @@ vim.keymap.set('n', '<leader>rodum', function()
   -- vim.notify('Git-bash path = ' .. git_bash_path, vim.log.levels.WARN, { title = 'GK commands' })
 
   if vim.fn.filereadable(git_bash_path) ~= 1 then
-    vim.notify('File do not exist path = ' .. git_bash_path, vim.log.levels.ERROR, { title = 'GK commands' })
+    vim.notify('File do not exist path = ' .. git_bash_path, vim.log.levels.ERROR, { title = 'Oracle commands' })
   end
 
   -- Construct the command to be executed by bash
   local command_to_run = git_bash_path
-  vim.notify('Command to run = ' .. command_to_run, vim.log.levels.WARN, { title = 'GK commands' })
+  vim.notify('Command to run = ' .. command_to_run, vim.log.levels.WARN, { title = 'Oracle commands' })
 
   -- Ensure bash terminal configuration
   vim.cmd 'setlocal shellcmdflag=-c'
@@ -195,7 +195,7 @@ vim.keymap.set('n', '<leader>rodum', function()
   vim.cmd 'vsp'
 
   -- Construct and execute the command
-  vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer
+  -- vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer
   vim.cmd('terminal ' .. command_to_run)
 end, {
   noremap = true,
@@ -323,11 +323,14 @@ function run_java_test_method(debug)
   local project_name = utils.get_java_project_name()
   local test_runner = get_test_runner(project_name, test_name, debug)
   if test_runner then
+    -- vertical split
+    vim.cmd 'vsp'
+
     -- Ensure bash terminal configuration
     vim.cmd ':setlocal shellcmdflag=-c'
 
     vim.cmd 'enew' -- Create a new empty buffer
-    vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer
+    -- vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer
 
     vim.notify('Command to use: ' .. test_runner, vim.log.levels.WARN, { title = 'Java test' })
 
@@ -341,11 +344,14 @@ function run_java_test_class(debug)
   local project_name = utils.get_java_project_name()
   local test_runner = get_test_runner(project_name, test_name, debug)
   if test_runner then
+    -- vertical split
+    vim.cmd 'vsp'
+
     -- Ensure bash terminal configuration
     vim.cmd ':setlocal shellcmdflag=-c'
 
     vim.cmd 'enew' -- Create a new empty buffer
-    vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer
+    -- vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer
 
     vim.notify('Command to use: ' .. test_runner, vim.log.levels.WARN, { title = 'Java test' })
 
