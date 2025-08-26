@@ -166,8 +166,6 @@ vim.opt.confirm = true
 vim.opt.wrap = false
 vim.opt_local.conceallevel = 2
 vim.opt.shiftwidth = 2
-vim.opt.ignorecase = true
-vim.opt.smartcase = true
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
