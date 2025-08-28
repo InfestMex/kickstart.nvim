@@ -424,7 +424,7 @@ require('lazy').setup({
         --  All the info you're looking for is in `:help telescope.setup()`
         --
         defaults = {
-          file_ignore_patterns = { 'node_modules', '.git', '%.class' },
+          file_ignore_patterns = { 'node_modules', '.git/', '%.class' },
           hidden = true, -- Include hidden files (like .git, .config, etc.)
           no_ignore = true, -- Ignore .gitignore and .fdignore rules
           path_display = {
@@ -482,7 +482,13 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
-      vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+      vim.keymap.set('n', '<leader><leader>', function()
+        builtin.buffers {
+          -- show_all_buffers = true,
+          -- show_hidden = true,
+          -- no_ignore = true,
+        }
+      end, { desc = '[ ] Find existing buffers' })
 
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()
