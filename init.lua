@@ -512,6 +512,9 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sn', function()
         builtin.find_files { cwd = vim.fn.stdpath 'config' }
       end, { desc = '[S]earch [N]eovim files' })
+
+      -- My custom keymaps
+      require('custom.multigrep').setup()
     end,
   },
 
@@ -1041,7 +1044,7 @@ require('lazy').setup({
     },
     config = function()
       require('codeium').setup {
-        virtual_text = { enabled = true, accept = '<C-y>' },
+        virtual_text = { enabled = true, key_bindings = { accept = '<C-.>' } },
       }
     end,
   },
@@ -1781,6 +1784,7 @@ require('lazy').setup({
 })
 
 require 'custom.keymaps'
+require 'custom.runBash'
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
