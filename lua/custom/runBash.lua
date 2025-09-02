@@ -75,11 +75,11 @@ local run_pos_file = vim.fn.stdpath 'config' .. '/custom/files/gk/FBA/POS_sandbo
 -- We'll map <leader>sh to the function defined above.
 vim.keymap.set(
   'n', -- Normal mode
-  '<leader>rgfs', -- The key sequence (e.g., \sh with default leader)
+  '<leader>rgfp', -- The key sequence (e.g., \sh with default leader)
   function()
     run_sh_file_to_log_buffer(run_pos_file)
   end,
-  { silent = true, desc = 'Run .sh file and display output in a log buffer' }
+  { silent = true, desc = '[R]un [G]K [F]BA [P]os' }
 )
 
 -- Create the new keymap for stopping the running job.
@@ -90,5 +90,5 @@ vim.keymap.set(
   function()
     stop_running_job()
   end,
-  { silent = true, desc = 'Stop the currently running shell script' }
+  { silent = true, desc = '[R]un [G]K [F]BA [K]ill POS' }
 )

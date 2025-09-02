@@ -135,38 +135,6 @@ vim.keymap.set('n', '<Leader>rgfm', function()
   vim.cmd 'terminal'
 end, { desc = 'FBA - Start MVN Shell', noremap = true, silent = true })
 
-vim.keymap.set('n', '<Leader>rgfp', function()
-  -- TODO: move this in to a lua logic
-
-  local config_path = vim.fn.stdpath 'config'
-  -- vim.notify('Config folder = ' .. config_path, vim.log.levels.WARN, { title = 'GK commands' })
-
-  -- Construct the full path using the environment variable and correct backslashes for Lua
-  local script_full_path = config_path .. '/custom/files/gk/FBA/POS_sandbox__7102.sh'
-  -- vim.notify('Full path = ' .. script_full_path, vim.log.levels.WARN, { title = 'GK commands' })
-
-  local git_bash_path = vim.fn.fnameescape(script_full_path)
-  -- vim.notify('Git-bash path = ' .. git_bash_path, vim.log.levels.WARN, { title = 'GK commands' })
-
-  if vim.fn.filereadable(git_bash_path) ~= 1 then
-    vim.notify('File do not exist path = ' .. git_bash_path, vim.log.levels.ERROR, { title = 'GK commands' })
-  end
-
-  -- Construct the command to be executed by bash
-  local command_to_run = git_bash_path
-  vim.notify('Command to run = ' .. command_to_run, vim.log.levels.WARN, { title = 'GK commands' })
-
-  -- Ensure bash terminal configuration
-  vim.cmd 'setlocal shellcmdflag=-c'
-
-  -- vertical split
-  vim.cmd 'vsp'
-
-  -- Construct and execute the command
-  -- vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer
-  vim.cmd('terminal ' .. command_to_run)
-end, { desc = 'FBA - Run GK POS', noremap = true, silent = true })
-
 vim.keymap.set('n', '<Leader>rggp', function()
   -- vertical split
   vim.cmd 'vsp'
