@@ -23,9 +23,10 @@ export FD_HOME="/c/DEV_HOME/TOOLS/fd-pc-windows-gnu"
 export PYTHON_HOME="/c/DEV_HOME/TOOLS/python3.13.4"
 export RIPGREP_HOME="/c/DEV_HOME/TOOLS/ripgrep"
 export GCC_HOME="/c/DEV_HOME/TOOLS/mingw64/bin"
+export PSQL_HOME="/c/Program Files/PostgreSQL/16/bin"
 
 # Update the PATH variable, using ':' as the separator for Bash
-export PATH="$LOCAL_HOME/scripts:$SHARED_HOME/scripts:$M2_HOME/bin:$PATH:$NVIM_BIN:$GCC_HOME:$RIPGREP_HOME:$PYTHON_HOME:$FD_HOME"
+export PATH="$LOCAL_HOME/scripts:$SHARED_HOME/scripts:$M2_HOME/bin:$PATH:$NVIM_BIN:$GCC_HOME:$RIPGREP_HOME:$PYTHON_HOME:$FD_HOME:$PSQL_HOME"
 
 # Display a confirmation message with the new PATH
 echo "Environment variables have been updated."

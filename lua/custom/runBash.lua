@@ -48,7 +48,8 @@ local function run_sh_file_to_log_buffer(file_path_arg)
       -- Append a footer to the log buffer when the job is done.
       local footer = string.format('\n--- Finished with exit code %s ---', code)
       -- vim.api.nvim_buf_set_lines(log_buf_id, -1, -1, false, { footer })
-      vim.cmd 'normal! G' -- Scroll to the bottom
+      -- Close the buffer after the script finishes to avoid unsaved changes on exit.
+      vim.api.nvim_buf_delete(log_buf_id, { force = true })
       -- Clear the global job ID variable when the job is complete.
       running_job_id = nil
     end,

@@ -992,8 +992,12 @@ require('lazy').setup({
 
       sources = {
         default = { 'lsp', 'path', 'snippets', 'lazydev' },
+        per_filetype = {
+          sql = { 'snippets', 'dadbod', 'buffer' },
+        },
         providers = {
           lazydev = { module = 'lazydev.integrations.blink', score_offset = 100 },
+          dadbod = { name = 'Dadbod', module = 'vim_dadbod_completion.blink' },
         },
       },
 
@@ -1044,9 +1048,16 @@ require('lazy').setup({
     },
     config = function()
       require('codeium').setup {
-        virtual_text = { enabled = true, key_bindings = { accept = '<C-.>' } },
+        virtual_text = { enabled = true, key_bindings = { accept = '<C-a>' } },
       }
     end,
+  },
+
+  -- Database client
+  {
+    'tpope/vim-dadbod',
+    'kristijanhusak/vim-dadbod-completion',
+    'kristijanhusak/vim-dadbod-ui',
   },
 
   {
