@@ -48,7 +48,8 @@ local function run_sh_file_to_log_buffer(file_path_arg)
       -- Append a footer to the log buffer when the job is done.
       local footer = string.format('\n--- Finished with exit code %s ---', code)
       -- vim.api.nvim_buf_set_lines(log_buf_id, -1, -1, false, { footer })
-      vim.cmd 'normal! G' -- Scroll to the bottom
+      -- Close the buffer after the script finishes to avoid unsaved changes on exit.
+      vim.api.nvim_buf_delete(log_buf_id, { force = true })
       -- Clear the global job ID variable when the job is complete.
       running_job_id = nil
     end,
@@ -75,11 +76,11 @@ local run_pos_file = vim.fn.stdpath 'config' .. '/custom/files/gk/FBA/POS_sandbo
 -- We'll map <leader>sh to the function defined above.
 vim.keymap.set(
   'n', -- Normal mode
-  '<leader>rgfs', -- The key sequence (e.g., \sh with default leader)
+  '<leader>rgfp', -- The key sequence (e.g., \sh with default leader)
   function()
     run_sh_file_to_log_buffer(run_pos_file)
   end,
-  { silent = true, desc = 'Run .sh file and display output in a log buffer' }
+  { silent = true, desc = '[R]un [G]K [F]BA [P]os' }
 )
 
 -- Create the new keymap for stopping the running job.
@@ -90,5 +91,5 @@ vim.keymap.set(
   function()
     stop_running_job()
   end,
-  { silent = true, desc = 'Stop the currently running shell script' }
+  { silent = true, desc = '[R]un [G]K [F]BA [K]ill POS' }
 )

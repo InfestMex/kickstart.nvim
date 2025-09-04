@@ -12,6 +12,7 @@ export JAVA_1_6_HOME="$JAVA_HOME"
 export JAVA_1_8_HOME="$JAVA_HOME"
 export JAVA_1_11_HOME="$JAVA_HOME"
 export JAVA_11_HOME="$JAVA_1_11_HOME"
+export JAVA_17_HOME="$JAVA_HOME"
 
 # Set Maven-related variables
 export M2_HOME="$SHARED_HOME/TOOLS/mvn/apache-maven-3.6.3"
