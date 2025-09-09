@@ -2,18 +2,20 @@ local wk = require 'which-key'
 vim.defer_fn(function()
   -- Define menu groups
   wk.add {
+    { '<leader>jd', group = '[J]ava [D]ebug' },
+    { '<leader>jt', group = '[J]ava [T]est' },
     { '<leader>p', group = '[P]roject' },
+    { '<leader>pg', group = '[P]roject [G]k' },
     { '<leader>po', group = '[P]roject [O]racle' },
     { '<leader>pv', group = '[P]roject [V]ictor' },
-    { '<leader>pg', group = '[P]roject [G]k' },
     { '<leader>r', group = '[R]un' },
-    { '<leader>ro', group = '[R]un [O]racle' },
-    { '<leader>rod', group = '[R]un [O]racle [D]ata base' },
-    { '<leader>rox', group = '[R]un [O]racle [X]store' },
     { '<leader>rg', group = '[R]un [G]K' },
     { '<leader>rgf', group = '[R]un [G]K [F]BA' },
     { '<leader>rgg', group = '[R]un [G]K [G]eneral' },
     { '<leader>rgp', group = '[R]un [G]K [P]PG' },
+    { '<leader>ro', group = '[R]un [O]racle' },
+    { '<leader>rod', group = '[R]un [O]racle [D]ata base' },
+    { '<leader>rox', group = '[R]un [O]racle [X]store' },
   }
 end, 0)
 
@@ -44,6 +46,12 @@ vim.keymap.set('n', '<leader>poc', ':cd /home/viaguila/dev/current/git/xstore<CR
   silent = true,
   desc = '[P]roject [O]racle [C]urrent Xstore',
 })
+vim.keymap.set('n', '<leader>pod', ':cd /home/viaguila/dev/current/dbcomparison/git/dbcomparison<CR>', {
+  noremap = true,
+  silent = true,
+  desc = '[P]roject [O]racle [D]atabase comparison',
+})
+
 vim.keymap.set('n', '<leader>poq', ':cd /home/viaguila/dev/25.0/git/xstore<CR>', {
   noremap = true,
   silent = true,
