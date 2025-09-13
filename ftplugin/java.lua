@@ -10,9 +10,8 @@ local bundles = {
 vim.list_extend(bundles, vim.split(vim.fn.glob(home .. '/AppData/Local/nvim-data/mason/share/java-test/*.jar', 1), '\n'))
 
 local config = {
-  -- cmd = { home .. '/AppData/Local/nvim-data/mason/packages/jdtls/bin/jdtls' },
-  cmd = { home .. '/.local/share/nvim/mason/packages/jdtls/jdtls' },
-  root_dir = vim.fs.dirname(vim.fs.find({ 'gradlew', '.git', '.gradle', 'mvnw' }, { upward = true })[1]),
+  cmd = { home .. '/AppData/Local/nvim-data/mason/packages/jdtls/bin/jdtls' },
+  root_dir = vim.fs.dirname(vim.fs.find({ 'gradlew', '.git', 'mvnw' }, { upward = true })[1]),
   --[[
   cmd = {
         -- Ensure you are using the correct java executable that corresponds to your JAVA_HOME
@@ -36,6 +35,8 @@ local config = {
   -- Here you can configure eclipse.jdt.ls specific settings
   -- See https://github.com/eclipse/eclipse.jdt.ls/wiki/Running-the-JAVA-LS-server-from-the-command-line#initialize-request
   -- for a list of options
+  -- Here you can configure eclipse.jdt.ls specific settings
+  -- See https://github.com/eclipse/eclipse.jdt.ls/wiki/Running-the-JAVA-LS-server-from-the-command-line#initialize-request
   settings = {
     java = {
       -- TODO Replace this with the absolute path to your main java version (JDTLS requires JDK 21 or higher)
@@ -74,10 +75,6 @@ local config = {
         --   url = "https://github.com/google/styleguide/blob/gh-pages/intellij-java-google-style.xml",
         --   profile = "GoogleStyle",
         -- },
-        settings = {
-          url = '/home/viaguila/dev/xstore_formatter.xml',
-          profile = 'xstore',
-        },
       },
       completion = {
         favoriteStaticMembers = {
@@ -148,9 +145,9 @@ local config = {
 }
 
 -- Needed for debugging
-config['on_attach'] = function(client, bufnr)
-  jdtls.setup_dap { hotcodereplace = 'auto' }
-  require('jdtls.dap').setup_dap_main_class_configs()
+config["on_attach"] = function(client, bufnr)
+  jdtls.setup_dap({ hotcodereplace = "auto" })
+  require("jdtls.dap").setup_dap_main_class_configs()
 end
 
 -- This starts a new client & server, or attaches to an existing client & server based on the `root_dir`.
