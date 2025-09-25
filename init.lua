@@ -424,6 +424,7 @@ require('lazy').setup({
         --  All the info you're looking for is in `:help telescope.setup()`
         --
         defaults = {
+          layout_strategy = 'vertical',
           file_ignore_patterns = { 'node_modules', '.git/', '%.class' },
           hidden = true, -- Include hidden files (like .git, .config, etc.)
           no_ignore = true, -- Ignore .gitignore and .fdignore rules
