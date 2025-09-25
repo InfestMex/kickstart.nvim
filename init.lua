@@ -759,7 +759,7 @@ require('lazy').setup({
           },
         },
 
-        jdtls = {},
+        -- jdtls = {},
         -- java = {},
       }
 
@@ -994,6 +994,7 @@ require('lazy').setup({
         default = { 'lsp', 'path', 'snippets', 'lazydev' },
         per_filetype = {
           sql = { 'snippets', 'dadbod', 'buffer' },
+          plsql = { 'snippets', 'dadbod', 'buffer' },
         },
         providers = {
           lazydev = { module = 'lazydev.integrations.blink', score_offset = 100 },
@@ -1047,9 +1048,10 @@ require('lazy').setup({
       'hrsh7th/nvim-cmp',
     },
     config = function()
-      require('codeium').setup {
-        virtual_text = { enabled = true, key_bindings = { accept = '<C-a>' } },
-      }
+      -- require('codeium').setup {
+      --   virtual_text = { enabled = true, key_bindings = { accept = '<C-a>' } },
+      -- }
+      -- require('codeium').disable()
     end,
   },
 
@@ -1161,7 +1163,7 @@ require('lazy').setup({
           -- wo = { wrap = true } -- Wrap notifications
         },
       },
-      lazygit = { enabled = true },
+      lazygit = {},
     },
     keys = {
       -- Top Pickers & Explorer
