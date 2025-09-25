@@ -82,6 +82,11 @@ vim.keymap.set('n', '<leader>pgfc', ':cd C:\\DEV_HOME\\FBA\\ws-cen\\git<CR>', {
   silent = true,
   desc = '[P]roject [G]K [F]BA [C]entral',
 })
+vim.keymap.set('n', '<leader>pvdc', ':e ~/.local/share/db_ui/connections.json<CR>', {
+  noremap = true,
+  silent = true,
+  desc = '[P]roject [V]ictor [D]ataBase [C]Configuration file',
+})
 
 function OpenTerminalWithEnv(env_vars)
   return function()
@@ -174,8 +179,8 @@ vim.keymap.set('n', '<Leader>rgfss', function()
 end, { desc = 'FBA - Fix servers wars (SDC only)', noremap = true, silent = true })
 
 vim.keymap.set('n', '<Leader>rggp', function()
-  -- vertical split
-  vim.cmd 'vsp'
+  -- split
+  vim.cmd 'sp'
 
   -- Ensure bash terminal configuration
   vim.cmd 'setlocal shellcmdflag=-c'
@@ -183,7 +188,75 @@ vim.keymap.set('n', '<Leader>rggp', function()
   vim.cmd 'terminal "net start "postgresql-x64-16""'
 end, { desc = '[R]un [G]K [G]eneral Start [P]ostgresql service', noremap = true, silent = true })
 
+vim.keymap.set('n', '<leader>roqac', function()
+  -- split
+  vim.cmd 'sp'
+
+  vim.cmd 'enew' -- Create a new empty buffer
+  vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer
+  --TODO: do this... can be solved using ant, see v22/xst_pos/startxstore.sh
+  --the current command assume the project folder and the gradle task exist
+  vim.cmd 'term ./xst_pos/startxstore.sh' -- Run the command in a terminal
+end, {
+  noremap = true,
+  silent = true,
+  desc = '[R]un [O]racle v22 [A]pp [C]lassic',
+})
+
+vim.keymap.set('n', '<leader>rocax', function()
+  --NOTE: the current command assume the project folder and the gradle task exist
+
+  -- split
+  vim.cmd 'sp'
+
+  -- Then xstore server
+  vim.cmd 'enew' -- Create a new empty buffer
+  vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer
+  vim.cmd 'term ./gradlew runXstoreM --console=plain' -- Run the command in a terminal
+
+  -- Then xstore client
+  vim.cmd 'vsp'
+  vim.cmd 'enew' -- Create a new empty buffer
+  vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer
+  vim.cmd 'term ./gradlew xstore-client:ojetServe --console=plain' -- Run the command in a terminal
+end, {
+  noremap = true,
+  silent = true,
+  desc = '[R]un [O]racle [C]urrent [A]pp [X]store',
+})
+
+vim.keymap.set('n', '<leader>rocac', function()
+  --NOTE: the current command assume the project folder and the gradle task exist
+
+  -- split
+  vim.cmd 'sp'
+
+  vim.cmd 'enew' -- Create a new empty buffer
+  vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer
+  vim.cmd 'term ./gradlew runXstore --console=plain' -- Run the command in a terminal
+end, {
+  noremap = true,
+  silent = true,
+  desc = '[R]un [O]racle [C]urrent [A]pp [C]lassic',
+})
+
+vim.keymap.set('n', '<leader>rocas', function()
+  -- -- split
+  -- vim.cmd 'sp'
+  --
+  -- vim.cmd 'enew' -- Create a new empty buffer
+  -- vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer
+  vim.cmd '!./gradlew --stop' -- Run the command in a terminal
+end, {
+  noremap = true,
+  silent = true,
+  desc = '[R]un [O]racle [C]urrent [A]pp [S]top',
+})
+
 vim.keymap.set('n', '<leader>rodo', function()
+  -- split
+  vim.cmd 'sp'
+
   vim.cmd 'enew' -- Create a new empty buffer
   vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer
   vim.cmd 'term /home/viaguila/dev/current/git/xstore/gradlew -i --project-dir /home/viaguila/dev/current/git/xstore :xst_pos:oraclePdbBuildLab' -- Run the command in a terminal
@@ -193,6 +266,9 @@ end, {
   desc = '[R]un [O]racle [D]ataBase [O]racle PDB',
 })
 vim.keymap.set('n', '<leader>rods', function()
+  -- split
+  vim.cmd 'sp'
+
   vim.cmd 'enew' -- Create a new empty buffer
   vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer
   vim.cmd 'term /home/viaguila/dev/current/git/xstore/gradlew -i --project-dir /home/viaguila/dev/current/git/xstore :xst_pos:mssqlBuildLab' -- Run the command in a terminal
@@ -258,8 +334,8 @@ vim.keymap.set('n', '<leader>roduo', function()
   -- Ensure bash terminal configuration
   vim.cmd 'setlocal shellcmdflag=-c'
 
-  -- vertical split
-  vim.cmd 'vsp'
+  -- split
+  vim.cmd 'sp'
 
   -- Construct and execute the command
   vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer
@@ -271,6 +347,9 @@ end, {
 })
 
 vim.keymap.set('n', '<leader>roxc', function()
+  -- split
+  vim.cmd 'sp'
+
   vim.cmd 'enew' -- Create a new empty buffer
   vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer
   vim.cmd 'term /home/viaguila/dev/current/git/xstore/gradlew -i --project-dir /home/viaguila/dev/current/git/xstore :xstore-client:ojetServe' -- Run the command in a terminal
@@ -291,6 +370,75 @@ end, {
 })
 
 vim.keymap.set('n', '<leader>yf', ':let @+=expand("%:t")<CR>', { noremap = true, silent = true, desc = 'Copy current file name' })
+
+vim.keymap.set('n', '<leader>rcr', function()
+  local config_path = vim.fn.stdpath 'config'
+  -- vim.notify('Config folder = ' .. config_path, vim.log.levels.WARN, { title = 'GK commands' })
+
+  -- Construct the full path using the environment variable and correct backslashes for Lua
+  local script_full_path = config_path .. '/custom/files/general/pods/run_pod.sh'
+  -- vim.notify('Full path = ' .. script_full_path, vim.log.levels.WARN, { title = 'GK commands' })
+
+  local git_bash_path = vim.fn.fnameescape(script_full_path)
+  -- vim.notify('Git-bash path = ' .. git_bash_path, vim.log.levels.WARN, { title = 'GK commands' })
+
+  if vim.fn.filereadable(git_bash_path) ~= 1 then
+    vim.notify('File do not exist path = ' .. git_bash_path, vim.log.levels.ERROR, { title = 'Container commands' })
+  end
+
+  -- Construct the command to be executed by bash
+  local command_to_run = git_bash_path
+  vim.notify('Command to run = ' .. command_to_run, vim.log.levels.WARN, { title = 'Container commands' })
+
+  -- Ensure bash terminal configuration
+  vim.cmd 'setlocal shellcmdflag=-c'
+
+  -- split
+  vim.cmd 'sp'
+
+  -- Construct and execute the command
+  -- vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer
+  vim.cmd('terminal ' .. command_to_run)
+end, {
+  noremap = true,
+  silent = true,
+  desc = '[R]un [C]ontainers [R]un',
+})
+
+vim.keymap.set('n', '<leader>rcs', function()
+  local config_path = vim.fn.stdpath 'config'
+  -- vim.notify('Config folder = ' .. config_path, vim.log.levels.WARN, { title = 'GK commands' })
+
+  -- Construct the full path using the environment variable and correct backslashes for Lua
+  local script_full_path = config_path .. '/custom/files/general/pods/stop_pod.sh'
+  -- vim.notify('Full path = ' .. script_full_path, vim.log.levels.WARN, { title = 'GK commands' })
+
+  local git_bash_path = vim.fn.fnameescape(script_full_path)
+  -- vim.notify('Git-bash path = ' .. git_bash_path, vim.log.levels.WARN, { title = 'GK commands' })
+
+  if vim.fn.filereadable(git_bash_path) ~= 1 then
+    vim.notify('File do not exist path = ' .. git_bash_path, vim.log.levels.ERROR, { title = 'Container commands' })
+  end
+
+  -- Construct the command to be executed by bash
+  local command_to_run = git_bash_path
+  vim.notify('Command to run = ' .. command_to_run, vim.log.levels.WARN, { title = 'Container commands' })
+
+  -- Ensure bash terminal configuration
+  vim.cmd 'setlocal shellcmdflag=-c'
+
+  -- split
+  vim.cmd 'sp'
+
+  -- Construct and execute the command
+  -- vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer
+  vim.cmd('terminal ' .. command_to_run)
+end, {
+  noremap = true,
+  silent = true,
+  desc = '[R]un [C]ontainers [S]top',
+})
+
 vim.keymap.set('n', '<Leader>rgpm', function()
   -- Get the SHARED_HOME environment variable
   local shared_home = os.getenv 'SHARED_HOME'
