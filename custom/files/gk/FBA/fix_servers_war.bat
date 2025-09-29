@@ -2,7 +2,7 @@
 setlocal
 
 :: This script should be placed in C:\DEV_HOME\CMX
-set "BASE_DIR=%~dp0"
+set "BASE_DIR=C:\DEV_HOME\FBA\"
 set "WS_CEN_DIR=%BASE_DIR%ws-cen"
 set "GIT_DIR=%WS_CEN_DIR%\git"
 set "METADATA_DIR=%WS_CEN_DIR%\.metadata\.plugins\org.eclipse.wst.server.core"
@@ -23,7 +23,7 @@ call :deploy_war "employee-hub-sandbox-war" "employee-hub\build\employee-hub-san
 
 echo.
 echo All deployments finished.
-pause
+REM pause
 goto :eof
 
 :: --------------------------------------------------------------------

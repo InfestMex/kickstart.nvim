@@ -10,6 +10,7 @@ vim.defer_fn(function()
     { '<leader>pv', group = '[P]roject [V]ictor' },
     { '<leader>r', group = '[R]un' },
     { '<leader>rg', group = '[R]un [G]K' },
+    { '<leader>rge', group = '[R]un [G]K [E]XP' },
     { '<leader>rgf', group = '[R]un [G]K [F]BA' },
     { '<leader>rgg', group = '[R]un [G]K [G]eneral' },
     { '<leader>rgp', group = '[R]un [G]K [P]PG' },
@@ -143,6 +144,38 @@ vim.keymap.set('n', '<Leader>rgfm', function()
   vim.cmd 'terminal'
 end, { desc = 'FBA - Start MVN Shell', noremap = true, silent = true })
 
+vim.keymap.set('n', '<Leader>rgem', function()
+  -- TODO: move this in to a lua logic
+
+  -- Ensure bash terminal configuration
+  vim.cmd 'setlocal shellcmdflag=-c'
+
+  -- vertical split
+  vim.cmd 'vsp'
+
+  vim.cmd 'terminal'
+  -- The command you want to run after .bashrc loads
+  -- local config_path = vim.fn.fnameescape(vim.fn.stdpath 'config')
+  -- local command_to_run = 'source ' .. config_path .. '/custom/files/gk/GXC/set-project-env-variables.sh'
+  local command_to_run = 'source ~/AppData/Local/nvim/custom/files/gk/GXC/set-project-env-variables.sh'
+
+  vim.notify('Running command = ' .. command_to_run, vim.log.levels.ERROR, { title = 'GK commands' })
+
+  -- The carriage return/Enter key
+  local enter = vim.api.nvim_replace_termcodes('<CR>', true, true, true)
+
+  -- The full sequence of keys to "type":
+  -- 'a' (enter Terminal-mode)
+  -- <command_to_run> (your script command)
+  -- <enter> (run the command)
+  local keys = 'a' .. command_to_run .. enter
+
+  -- Send the keys. The 't' mode means "typed" keys.
+  -- A small delay is implicitly added by the event loop,
+  -- which usually makes this reliable.
+  vim.fn.feedkeys(keys, 't')
+end, { desc = 'EXP - Start MVN Shell', noremap = true, silent = true })
+
 vim.keymap.set('n', '<Leader>rgfss', function()
   local config_path = vim.fn.stdpath 'config'
   -- vim.notify('Config folder = ' .. config_path, vim.log.levels.WARN, { title = 'GK commands' })
@@ -172,6 +205,36 @@ vim.keymap.set('n', '<Leader>rgfss', function()
   vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer
   vim.cmd('terminal ' .. command_to_run)
 end, { desc = 'FBA - Fix servers wars (SDC only)', noremap = true, silent = true })
+
+vim.keymap.set('n', '<Leader>rgfsa', function()
+  local config_path = vim.fn.stdpath 'config'
+  -- vim.notify('Config folder = ' .. config_path, vim.log.levels.WARN, { title = 'GK commands' })
+
+  -- Construct the full path using the environment variable and correct backslashes for Lua
+  local script_full_path = config_path .. '/custom/files/gk/FBA/fix_servers_war.bat'
+  -- vim.notify('Full path = ' .. script_full_path, vim.log.levels.WARN, { title = 'GK commands' })
+
+  local git_bash_path = vim.fn.fnameescape(script_full_path)
+  -- vim.notify('Git-bash path = ' .. git_bash_path, vim.log.levels.WARN, { title = 'GK commands' })
+
+  if vim.fn.filereadable(git_bash_path) ~= 1 then
+    vim.notify('File do not exist path = ' .. git_bash_path, vim.log.levels.ERROR, { title = 'GK commands' })
+  end
+
+  -- Construct the command to be executed by bash
+  local command_to_run = git_bash_path
+  vim.notify('Command to run = ' .. command_to_run, vim.log.levels.WARN, { title = 'GK commands' })
+
+  -- Ensure bash terminal configuration
+  vim.cmd 'setlocal shellcmdflag=-c'
+
+  -- vertical split
+  vim.cmd 'vsp'
+
+  -- Construct and execute the command
+  vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer
+  vim.cmd('terminal ' .. command_to_run)
+end, { desc = 'FBA - Fix servers wars (All)', noremap = true, silent = true })
 
 vim.keymap.set('n', '<Leader>rggp', function()
   -- vertical split
