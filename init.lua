@@ -1041,6 +1041,10 @@ require('lazy').setup({
     end,
   },
 
+  {
+    'HiPhish/gradle.nvim',
+  },
+
   -- A.I.
   {
     'Exafunction/windsurf.nvim',
