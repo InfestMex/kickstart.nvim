@@ -70,17 +70,26 @@ local function stop_running_job()
   end
 end
 
-local run_pos_file = vim.fn.stdpath 'config' .. '/custom/files/gk/FBA/POS_sandbox__7102.sh'
-
 -- Create the keymap for running the script.
 -- We'll map <leader>sh to the function defined above.
 vim.keymap.set(
   'n', -- Normal mode
   '<leader>rgfp', -- The key sequence (e.g., \sh with default leader)
   function()
+    local run_pos_file = vim.fn.stdpath 'config' .. '/custom/files/gk/FBA/POS_sandbox__7102.sh'
     run_sh_file_to_log_buffer(run_pos_file)
   end,
   { silent = true, desc = '[R]un [G]K [F]BA [P]os' }
+)
+
+vim.keymap.set(
+  'n', -- Normal mode
+  '<leader>rgep', -- The key sequence (e.g., \sh with default leader)
+  function()
+    local run_pos_file = vim.fn.stdpath 'config' .. '/custom/files/gk/EXP/POS_sandbox__7102.sh'
+    run_sh_file_to_log_buffer(run_pos_file)
+  end,
+  { silent = true, desc = '[R]un [G]K [E]XP [P]os' }
 )
 
 -- Create the new keymap for stopping the running job.
