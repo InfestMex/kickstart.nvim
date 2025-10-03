@@ -125,14 +125,21 @@ end
 ---@return string|nil
 function M.get_java_full_class_name()
   local package_name = M.get_java_package_name()
-  vim.notify('Debug:package_name=' .. package_name, vim.log.levels.WARN, { title = 'Custom Utils' })
+  if package_name ~= nil then
+    vim.notify('Debug:package_name=' .. package_name, vim.log.levels.WARN, { title = 'Custom Utils' })
+  end
   local class_name = M.get_java_class_name()
-  vim.notify('Debug:class_name=' .. class_name, vim.log.levels.WARN, { title = 'Custom Utils' })
-
+  if class_name ~= nil then
+    vim.notify('Debug:class_name=' .. class_name, vim.log.levels.WARN, { title = 'Custom Utils' })
+  else
+    vim.error('Debug:class_name is null, cannot be obtain...', vim.log.levels.WARN, { title = 'Custom Utils' })
+  end
   if package_name ~= nil and class_name ~= nil then
     return package_name .. '.' .. class_name
   end
-
+  if package_name == nil and class_name ~= nil then
+    return class_name
+  end
   return nil
 end
 
