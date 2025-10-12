@@ -9,14 +9,21 @@ vim.defer_fn(function()
     { '<leader>po', group = '[P]roject [O]racle' },
     { '<leader>pv', group = '[P]roject [V]ictor' },
     { '<leader>r', group = '[R]un' },
-    { '<leader>rg', group = '[R]un [G]K' },
+    { '<leader>rc', group = '[R]un [C]onteiners' },
+    { '<leader>rg', group = '[R]un [G] Index' },
     { '<leader>rge', group = '[R]un [G]K [E]XP' },
     { '<leader>rgf', group = '[R]un [G]K [F]BA' },
     { '<leader>rgg', group = '[R]un [G]K [G]eneral' },
     { '<leader>rgp', group = '[R]un [G]K [P]PG' },
     { '<leader>ro', group = '[R]un [O]racle' },
+    { '<leader>roc', group = '[R]un [O]racle [C]urrent' },
+    { '<leader>roca', group = '[R]un [O]racle [C]urrent [A]pp' },
     { '<leader>rod', group = '[R]un [O]racle [D]ata base' },
+    { '<leader>roq', group = '[R]un [O]racle [Q] v22' },
+    { '<leader>row', group = '[R]un [O]racle [W] v23' },
+    { '<leader>rowb', group = '[R]un [O]racle [W] v23 [B]uild' },
     { '<leader>rox', group = '[R]un [O]racle [X]store' },
+    { '<leader>roxa', group = '[R]un [O]racle [X]store [A]pp' },
   }
 end, 0)
 
@@ -264,6 +271,24 @@ end, {
   noremap = true,
   silent = true,
   desc = '[R]un [O]racle v22 [A]pp [C]lassic',
+})
+
+vim.keymap.set('n', '<leader>rowbc', function()
+  --TODO: this is not working, ant do not load the lib reference
+
+  -- split
+  vim.cmd 'sp'
+
+  vim.cmd 'enew' -- Create a new empty buffer
+  vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer
+  --TODO: do this... can be solved using ant, see v23/xst_pos/startxstore.sh
+  --the current command assume the project folder and the ant task exist
+  --move this .sh file to the nvim custom folder
+  vim.cmd 'term ./xst_pos/build_countrypack.sh' -- Run the command in a terminal
+end, {
+  noremap = true,
+  silent = true,
+  desc = '[R]un [O]racle v23 [B]uild [C]ountrypack',
 })
 
 vim.keymap.set('n', '<leader>rocax', function()
