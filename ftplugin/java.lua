@@ -10,8 +10,10 @@ local config = {
   -- See: https://github.com/eclipse/eclipse.jdt.ls#running-from-the-command-line
   cmd = {
     'jdtls',
+    '-configuration',
+    '/home/viaguila/.cache/jdtls/config',
     '-data',
-    '/home/viaguila/dev/current/git', -- Replace with your workspace data path
+    '/home/viaguila/.cache/jdtls/workspace',
   },
 
   -- `root_dir` must point to the root of your project.
@@ -23,7 +25,20 @@ local config = {
   -- See https://github.com/eclipse/eclipse.jdt.ls/wiki/Running-the-JAVA-LS-server-from-the-command-line#initialize-request
   -- for a list of options
   settings = {
-    java = {},
+    java = {
+      format = {
+        enabled = true,
+        -- Formatting works by default, but you can refer to a specific file/URL if you choose
+        -- settings = {
+        --   url = "https://github.com/google/styleguide/blob/gh-pages/intellij-java-google-style.xml",
+        --   profile = "GoogleStyle",
+        -- },
+        settings = {
+          url = '~/.config/nvim/custom/files/xstore_formatter.xml',
+          profile = 'xstore',
+        },
+      },
+    },
   },
 
   -- This sets the `initializationOptions` sent to the language server
