@@ -569,6 +569,7 @@ function get_test_runner(project_name, test_name, debug)
   local args = {
     project_name .. ':test',
     '--info',
+    '--rerun-tasks',
     '--tests',
     test_name,
   }

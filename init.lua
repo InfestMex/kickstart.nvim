@@ -902,7 +902,7 @@ require('lazy').setup({
         -- Disable "format_on_save lsp_fallback" for languages that don't
         -- have a well standardized coding style. You can add additional
         -- languages here or re-enable it for the disabled ones.
-        local disable_filetypes = { c = true, cpp = true }
+        local disable_filetypes = { c = true, cpp = true, xml = true }
         if disable_filetypes[vim.bo[bufnr].filetype] then
           return nil
         else
@@ -1152,6 +1152,26 @@ require('lazy').setup({
       -- Open parent directory in floating window
       vim.keymap.set('n', '<space>-', require('oil').toggle_float)
     end,
+  },
+
+  {
+    'cameron-wags/rainbow_csv.nvim',
+    config = true,
+    ft = {
+      'csv',
+      'tsv',
+      'csv_semicolon',
+      'csv_whitespace',
+      'csv_pipe',
+      'rfc_csv',
+      'rfc_semicolon',
+    },
+    cmd = {
+      'RainbowDelim',
+      'RainbowDelimSimple',
+      'RainbowDelimQuoted',
+      'RainbowMultiDelim',
+    },
   },
 
   {
@@ -1755,6 +1775,7 @@ require('lazy').setup({
         --  If you are experiencing weird indenting issues, add the language to
         --  the list of additional_vim_regex_highlighting and disabled languages for indent.
         additional_vim_regex_highlighting = { 'ruby' },
+        disable = { 'csv' },
       },
       indent = { enable = true, disable = { 'ruby' } },
     },
