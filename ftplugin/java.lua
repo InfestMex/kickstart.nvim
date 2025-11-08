@@ -1,4 +1,6 @@
 -- See `:help vim.lsp.start` for an overview of the supported `config` options.
+local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':p:h:t')
+
 local config = {
   name = 'jdtls',
 
@@ -13,13 +15,14 @@ local config = {
     '-configuration',
     '/home/viaguila/.cache/jdtls/config',
     '-data',
-    '/home/viaguila/.cache/jdtls/workspace',
+    '/home/viaguila/.cache/jdtls/workspace/' .. project_name,
   },
 
   -- `root_dir` must point to the root of your project.
   -- See `:help vim.fs.root`
-  root_dir = '/home/viaguila/dev/current/git/xstore',
+  -- root_dir = '/home/viaguila/dev/current/git/xstore',
   -- root_dir = vim.fs.root(0, { 'gradlew', '.git', 'git', 'mvnw' }),
+  root_dir = require('jdtls.setup').find_root { '.git', 'mvnw', 'gradlew' },
 
   -- Here you can configure eclipse.jdt.ls specific settings
   -- See https://github.com/eclipse/eclipse.jdt.ls/wiki/Running-the-JAVA-LS-server-from-the-command-line#initialize-request

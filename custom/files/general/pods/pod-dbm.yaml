@@ -16,7 +16,7 @@ spec:
           value: system
       volumeMounts:
         - name: oracle-db-oradata
-          mountPath: /opt/oracle/oradata
+          mountPath: /opt/oracle/oradata:Z
       securityContext:
         runAsUser: 54321 # Oracle's default user for the database, adjust if your image is different
         runAsGroup: 54321
@@ -36,7 +36,7 @@ spec:
           value: system!SA3
       volumeMounts:
         - name: mssql-data
-          mountPath: /var/opt/mssql/data
+          mountPath: /var/opt/mssql/data:Z
 
 
 

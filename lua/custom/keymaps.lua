@@ -389,7 +389,7 @@ vim.keymap.set('n', '<leader>rodum', function()
   vim.cmd 'setlocal shellcmdflag=-c'
 
   -- vertical split
-  vim.cmd 'vsp'
+  vim.cmd 'sp'
 
   -- Construct and execute the command
   -- vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer
@@ -426,7 +426,7 @@ vim.keymap.set('n', '<leader>roduo', function()
   vim.cmd 'sp'
 
   -- Construct and execute the command
-  vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer
+  -- vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer
   vim.cmd('terminal ' .. command_to_run)
 end, {
   noremap = true,
@@ -491,6 +491,40 @@ end, {
   noremap = true,
   silent = true,
   desc = '[R]un [C]ontainers [R]un',
+})
+
+vim.keymap.set('n', '<leader>rcc', function()
+  local config_path = vim.fn.stdpath 'config'
+  -- vim.notify('Config folder = ' .. config_path, vim.log.levels.WARN, { title = 'GK commands' })
+
+  -- Construct the full path using the environment variable and correct backslashes for Lua
+  local script_full_path = config_path .. '/custom/files/general/pods/create_pod.sh'
+  -- vim.notify('Full path = ' .. script_full_path, vim.log.levels.WARN, { title = 'GK commands' })
+
+  local git_bash_path = vim.fn.fnameescape(script_full_path)
+  -- vim.notify('Git-bash path = ' .. git_bash_path, vim.log.levels.WARN, { title = 'GK commands' })
+
+  if vim.fn.filereadable(git_bash_path) ~= 1 then
+    vim.notify('File do not exist path = ' .. git_bash_path, vim.log.levels.ERROR, { title = 'Container commands' })
+  end
+
+  -- Construct the command to be executed by bash
+  local command_to_run = git_bash_path
+  vim.notify('Command to run = ' .. command_to_run, vim.log.levels.WARN, { title = 'Container commands' })
+
+  -- Ensure bash terminal configuration
+  vim.cmd 'setlocal shellcmdflag=-c'
+
+  -- split
+  vim.cmd 'sp'
+
+  -- Construct and execute the command
+  -- vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer
+  vim.cmd('terminal ' .. command_to_run)
+end, {
+  noremap = true,
+  silent = true,
+  desc = '[R]un [C]ontainers [C]reate POD',
 })
 
 vim.keymap.set('n', '<leader>rcs', function()
