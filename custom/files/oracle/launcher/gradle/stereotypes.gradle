@@ -1,0 +1,1004 @@
+/**
+*  This script contains project type stereotyping logic.  Logic common to projects of a given type/use/etc.
+*  can be placed here to reduce repetition.
+*/
+ant.lifecycleLogLevel = "INFO"
+
+def cloudEnabledProjects = [
+    'rtlog-generator',
+    'xcenter-dtx',
+    'xcenter-admin',
+    'xcenter-file'
+  ]
+def gwtProjects = [
+    'xcenter-admin',
+    'xcenter-admin-entities',
+    'mr-test',
+    'xstoregwt-util'
+  ]
+def jetClientProjects = [
+    'xstore-cfd',
+    'xstore-client',
+    'xstore-client-handheld',
+    'xstore-sco',
+    'xstore-sco-mgr-console',
+    'xstore-shell-app'
+]
+def nodeJsProjects = jetClientProjects + [
+    'xenvironment'
+]
+def nonJavaProjects = [
+    'cst_template',
+    'database',
+    'latestBuild',
+    'posdistro',
+    'xenvdist',
+    'xservices-install',
+    'xstore-wrapper'
+]
+def mavenStyleProjects = [
+    'config-auto-populator',
+    'credentials-opss',
+    'data-migration',
+    'filetransfer-service',
+    'fileverifier',
+    'mr-injector',
+    'mr-test',
+    'proxy-service',
+    'jndi-datasource',
+    'rtlog-generator',
+    'secure-store-service',
+    'xcenter-dtx',
+    'xcenter-shared',
+    'xcenter-admin',
+    'xcenter-admin-dtx',
+    'xcenter-admin-entities',
+    'xcenter-file',
+    'xservices',
+    'xservices-api',
+    'xstore-unit',
+    'xst-xservices'
+  ]
+def generatedServiceContent = [
+    'service-discounts',
+    'service-items',
+    'service-prices',
+    'service-taxes',
+    'service-tenders'
+  ]
+
+
+//  globally support parfait
+def parfaitDir = project.file("build/parfait")
+def parfaitTools = new File(parfaitDir, "bin")
+task parfaitInstall(group: 'parfait') {
+  def parfaitRepo = 'https://artifacthub-iad.oci.oraclecorp.com/parfaitsuite-release/'
+  def parfaitPath = 'oracle/parfait/parfait-tools/2024.05/parfait-tools-2024.05-Linux-x86_64.tbz2'
+  inputs.property("path", parfaitPath)
+  outputs.dir(parfaitDir)
+  
+  doLast {
+    def params = [
+      repoRoot: parfaitRepo,
+      sourcePath: parfaitPath,
+      destPath: parfaitDir,
+      cutDirs: 1
+    ]
+    def parfaitBundle = Utils.stageArtifact(params)
+    println "Parfait staged at ${parfaitBundle}" 
+  }
+}
+
+/**
+ * Configure all the projects as defined in settings.gradle that haven't been tagged as non-java
+ */
+configure(subprojects.findAll() { !nonJavaProjects.contains(it.name) }) {
+  apply plugin: 'eclipse'
+  apply plugin: 'idea'
+  apply plugin: 'java'
+  apply plugin: 'java-library'
+  apply plugin: 'maven-publish'
+
+  configurations {
+    develop
+    xstoreRuntime
+    linux64
+    windows64
+    configValidation
+    javadocs
+  }
+
+  sourceSets {
+    main {
+      java {
+        // output resources to the classes dir so that persistence.xml, etc. can be bootstrapped correctly
+        output.resourcesDir = java.classesDirectory
+        
+        // add the xstoreRuntime configuration to appropriate classpaths
+        compileClasspath += configurations.xstoreRuntime
+        runtimeClasspath += configurations.xstoreRuntime
+        compileClasspath += configurations.linux64
+        compileClasspath += configurations.windows64
+        if (Utils.isWindows) {
+          runtimeClasspath += configurations.windows64
+        } else {
+          runtimeClasspath += configurations.linux64
+        }
+        
+        exclude '**/.gitkeep'
+        exclude '**/.gitignore'
+      }
+      resources {
+        exclude '**/.gitkeep'
+        exclude '**/.gitignore'
+      }
+    }
+    test {
+      java {        
+        // add the xstoreRuntime configuration to appropriate classpaths
+        compileClasspath += configurations.xstoreRuntime
+        runtimeClasspath += configurations.xstoreRuntime
+        compileClasspath += configurations.linux64
+        compileClasspath += configurations.windows64
+        if (Utils.isWindows) {
+          runtimeClasspath += configurations.windows64
+        } else {
+          runtimeClasspath += configurations.linux64
+        }
+        exclude '**/.gitkeep'
+        exclude '**/.gitignore'
+      }
+      resources {
+        exclude '**/.gitkeep'
+        exclude '**/.gitignore'
+      }
+    }
+  }
+  
+  dependencies {
+    configValidation project(':xstore-validation-tasks')
+  }
+  
+  tasks.withType(JavaCompile) {
+      options.fork = false
+      options.warnings = true
+      options.encoding = "UTF-8"
+      options.debug = true
+      options.compilerArgs << '-parameters'
+      options.compilerArgs << "-Xmaxerrs" << "400"
+      sourceCompatibility = 21
+      targetCompatibility = 21
+  }
+
+  java {
+      toolchain {
+          languageVersion.set(JavaLanguageVersion.of(System.getProperty('javaVersion', '21')))
+      }
+      withJavadocJar()
+      withSourcesJar()
+  }
+  
+  tasks.withType(Jar) {
+    doFirst {
+      manifest.attributes.put('Build-Time', Utils.buildTime)
+    }
+    manifest {
+      attributes(
+        'Built-By': System.getProperty("user.name"),
+        'Build-VM-Vendor': System.getProperty("java.vm.vendor"),
+        'Build-VM-Name': System.getProperty("java.vm.name"),
+        'Build-VM-Version': JavaVersion.current(),
+        'Build-OS': System.getProperty("os.name") + " (" + System.getProperty("os.arch") + ") version" +  System.getProperty("os.version"),
+        'Package-Identifier': project.provider({project.name + archiveClassifier.map{ it.isEmpty() ? it : '-' + it }.get() + " - " + Utils.buildVersion}),
+        'Implementation-Version': Utils.buildVersion,
+        'Implementation-Title': "${project.name}",
+        'Implementation-Vendor': "Oracle Corporation"
+      )
+    }
+  }
+  
+  jar {
+    if (!"xstore-validation-tasks".equals(project.name)) {
+      dependsOn(configurations.runtimeClasspath)
+      dependsOn(compileJava)
+    }
+  }
+  
+  sourcesJar {
+    dependsOn(compileJava.dependsOn)
+  }
+  
+  def parfaitOutDir = project.file("build/parfait")
+  def parfaitClassesDir = new File(parfaitOutDir, "classes")
+  task parfaitCompile(type: Exec, dependsOn: [ rootProject.parfaitInstall, compileJava] + compileJava.dependsOn(), group: 'parfait') {
+    def inputFiles = sourceSets.main.java
+    def compileJavaTask = compileJava
+    def commandFile = new File(parfaitOutDir, "command")
+    def objects = project.objects
+    
+    onlyIf {!inputFiles.matching {include '**/*.java'}.isEmpty()}
+    inputs.property('windows', Utils.isWindows)
+    inputs.files(inputFiles.matching {include '**/*.java'})
+    outputs.dir(parfaitClassesDir)
+    
+  
+    commandLine = [
+      new File(parfaitTools, "parfait-javac"),
+      "@" + commandFile
+    ]
+    doFirst {
+      if (commandFile.exists()) {
+        commandFile.delete()
+      }
+      commandFile.parentFile.mkdirs()
+      
+      def classpathParam = compileJavaTask.classpath.empty ? " " : ' -cp ' + compileJavaTask.classpath.asPath
+      def sourceFiles = compileJavaTask.source.files.join(' ')
+      commandFile.text = '-encoding UTF-8' + classpathParam + ' -source 21 -d ' + parfaitClassesDir + ' ' + sourceFiles
+    }
+  }
+    
+  task parfaitJar(type: Exec, dependsOn: [rootProject.parfaitInstall, parfaitCompile], group: 'parfait') {
+    def jarFile = new File(parfaitOutDir, "${project.name}-parfait.jar")
+    def jarBcFile = new File(parfaitOutDir, "${project.name}-parfait.jar.bc")
+    
+    onlyIf {!sourceSets.main.java.matching {include '**/*.java'}.isEmpty()}
+    inputs.files(parfaitCompile.outputs)
+    outputs.file(jarBcFile)
+  
+    workingDir = parfaitOutDir
+    commandLine = [
+      new File(parfaitTools, "parfait-jar"),
+      'cvf',
+      jarFile,
+      '.'
+    ]
+    doFirst {
+      if (jarFile.exists()) {
+        jarFile.delete()
+      }
+      if (jarBcFile.exists()) {
+        jarBcFile.delete()
+      }
+      parfaitOutDir.mkdirs()
+    }
+  }
+  
+  if (!"xstore-validation-tasks".equals(project.name)) {
+    task configValidation(dependsOn: [configurations.configValidation, configurations.runtimeClasspath, compileJava], group: 'build') {
+      def taskConfiguration = configurations.configValidation
+      def classesDir = project.files(sourceSets.main.java.classesDirectory)
+      def projectClasspath = configurations.runtimeClasspath
+      inputs.files(project.sourceSets.main.resources.matching {
+        include "**/*Config.xml"
+        include "**/*Handlers.xml"
+        include "**/form/*.xml"
+        include "**/query/*.xml"
+        include  "**/log/*.xml"
+        include "**/spring/*.xml"
+        include "**/*.properties"
+        exclude "**/translation*.properties"
+      })
+
+      onlyIf {!it.inputs.files.files.findAll{ it.exists() }.isEmpty()}
+      doLast {
+        // if we've got configs, validate them
+        def task = it
+        ant.taskdef(name: "validateXstoreConfigs", classname: "com.micros_retail.xstore.validation.ValidateXstoreConfigsTask", classpath: taskConfiguration.asPath)
+        ant.validateXstoreConfigs(classpath: (classesDir + projectClasspath).asPath, ignoreClasses: "com.microsretail.xstoremgwt.server.ws.CheetahGWTServerSerializer") {
+          task.inputs.files.each {
+            if (it.exists()) {
+              ant.file(file: it)
+            }
+          }
+        }
+      }
+    }
+    jar.dependsOn(configValidation)
+  }
+  
+  eclipse {
+    classpath {
+      if (Utils.isWindows) {
+        plusConfigurations += [configurations.windows64, configurations.xstoreRuntime]
+      } else {
+        plusConfigurations += [configurations.linux64, configurations.xstoreRuntime]
+      }
+    }
+  
+    jdt {
+      file {
+        withProperties { properties ->
+          properties['org.eclipse.jdt.core.compiler.codegen.methodParameters'] = 'generate'
+        }
+      }
+    }
+  }
+  eclipse.synchronizationTasks eclipseJdt
+  
+  javadoc {
+    maxMemory = "4096m" 
+    
+    options {
+      tags = [ "created" ]
+      
+      def extraClasspath
+      if (Utils.isWindows) {
+        extraClasspath = [configurations.xstoreRuntime, configurations.windows64]
+      } else {
+        extraClasspath = [configurations.xstoreRuntime, configurations.linux64]
+      }
+      doFirst {
+        extraClasspath.each{ classpath += it}
+      }
+    
+      exclude "br.*"
+      exclude "com.dtv.*"
+      exclude "com.google.*"
+      exclude "com.micros_retail.ant.*"
+      exclude "com.micros_retail.cluster.*"
+      exclude "com.micros_retail.gwt.*"
+      exclude "com.micros_retail.xadmin.*"
+      exclude "com.micros_retail.xcenter.*"
+      exclude "com.qas.*"
+      exclude "dtv.xst.dao.*.impl.*"
+      exclude "dtv.xst.dao.countrypack.*.impl.*"
+      exclude "ebay.*"
+      exclude "ifcws.*"
+      exclude "main.*"
+      exclude "org.*"
+      exclude "oracle.retail.xstore.countrypack.at.globaltrust.*"
+      exclude "oracle.retail.xstore.countrypack.br.ws.*"
+      exclude "oracle.retail.xstore.countrypack.es.ws.*"
+      exclude "oracle.retail.xstore.countrypack.it.einvoice.*"
+      exclude "oracle.retail.xstore.countrypack.mx.cfdi.*"
+      exclude "oracle.retail.xstore.countrypack.mx.tfd.*"
+      exclude "oracle.retail.xstore.countrypack.pl.jpk.*"
+      exclude "oracle.retail.xstore.countrypack.pt.shipping.ws.*"
+      exclude "oracle.retail.xstore.countrypack.test.*"
+      exclude "pt.*"
+      exclude "v1?.*"
+      exclude "v2?.*"
+    }
+  }
+  
+  artifacts{ javadocs javadocJar }
+  
+  tasks.withType(Javadoc).configureEach {
+    options.addStringOption('Xdoclint:none', '-quiet')
+    options.addStringOption('--allow-script-in-comments')
+  }
+
+  test {     
+    if (System.getProperty('test.failure.causes.build.failure') != null) {
+      ignoreFailures = Boolean.getBoolean('test.failure.causes.build.failure')
+    }
+      
+    systemProperty("file.encoding", "UTF-8")
+    systemProperty("org.apache.logging.log4j.level", "INFO")
+    systemProperty('log4j.configurationFile', project.provider({
+      def foundLog4jFile = project.sourceSets.test.find { it.name == 'log4j2.xml'}
+      return foundLog4jFile != null ? foundLog4jFile : ''
+    }))
+    if (project.file('system.properties').exists()) {
+      systemProperty('dtv.system.properties.location', project.file('system.properties'))
+    }
+    
+    // let mockito unsafe reflection keep working
+    jvmArgs += ['--add-opens', 'java.base/java.lang=ALL-UNNAMED']
+    
+    // need to specify memory for tests, won't come from gradle props
+    maxHeapSize = "1024m"
+    useJUnit()
+  }
+
+  publishing {
+    publications {
+      mavenJava(MavenPublication) {
+        groupId = 'oracle.retail.xstore'
+        version = Utils.buildVersion
+        from components.java
+          afterEvaluate {
+            artifactId = jar.archiveBaseName.get()
+          }
+      }
+    }
+  }
+
+  // other projects may depend upon processed resources, make sure they're resolved out-of-the-gate
+  compileJava.dependsOn processResources
+} // end all subprojects
+
+/**
+ * Configure all the projects as defined in settings.gradle that use legacy xstore project structures
+ */
+configure(subprojects.findAll() { !nonJavaProjects.contains(it.name) && !mavenStyleProjects.contains(it.name) }) {
+  sourceSets {
+    main.java.srcDirs = []
+    main.resources.srcDirs = []
+    test.java.srcDirs = []
+    test.resources.srcDirs = []
+  }
+  
+  if (project.file("src").exists()) {
+    sourceSets.main.java.srcDirs += project.file("src")
+  }
+  if (project.file("config").exists()) {
+    sourceSets.main.resources.srcDirs += project.file("config")
+  }
+  if (project.file("test").exists()) {
+    sourceSets.test.java.srcDirs += project.file("test")
+  }
+  if (project.file("test-config").exists()) {
+    sourceSets.test.resources.srcDirs += project.file("test-config")
+  }
+}
+
+
+
+/**
+ * Configure webapp projects
+ */
+configure(subprojects.findAll() { it.file('src/main/webapp').exists() }) {
+  apply plugin: 'war'
+  
+  def onpremWebapp = project.file('src/main/webapp-onprem')
+  def onpremResources = project.file('src/main/resources-onprem')
+  def clouldWebapp = project.file('src/main/webapp-cs')
+  def cloudResources = project.file('src/main/resources-cs')
+  def jettySources = project.file('src/test/jetty')
+  def hasJetty = jettySources.exists()
+  
+  if (hasJetty) {
+    configurations {
+      jetty
+    }
+  
+    sourceSets {
+      jetty {
+        java {
+          srcDirs += jettySources
+        }
+      }
+    }
+    
+    eclipse {
+      classpath {
+        plusConfigurations += configurations.jetty
+      }
+    }
+  }
+  
+  tasks.named("war")  {
+    rootSpec.exclude "**/.gitkeep"
+    rootSpec.exclude "**/.gitignore"
+
+    def onpremWarExcludes = project.file('build-war-onprem.excludes')
+    def documentsDir = project.file('src/main/documents')
+    duplicatesStrategy = 'exclude'
+    
+    if (documentsDir.exists()) {
+      classpath(documentsDir)
+    }
+    if (onpremWebapp.exists()) {
+      from(onpremWebapp)
+    }
+    if (onpremResources.exists()) {
+      classpath(onpremResources)
+    }
+    if (onpremWarExcludes.exists()) {
+      Utils.applyExcludes(rootSpec, onpremWarExcludes.readLines())
+    }
+    
+    manifest {
+      attributes(
+        'Built-By': System.getProperty("user.name"),
+        'Build-VM-Vendor': System.getProperty("java.vm.vendor"),
+        'Build-VM-Name': System.getProperty("java.vm.name"),
+        'Build-VM-Version': JavaVersion.current(),
+        'Build-OS': System.getProperty("os.name") + " (" + System.getProperty("os.arch") + ") version" +  System.getProperty("os.version"),
+        'Package-Identifier': project.provider({project.name + archiveClassifier.map{ it.isEmpty() ? it : '-' + it }.get() + " - " + Utils.buildVersion}),
+        'Implementation-Version': Utils.buildVersion,
+        'Implementation-Title': "${ant.project.name}",
+        'Implementation-Vendor': "Oracle Corporation"
+      )
+    }
+      
+    doFirst {
+      manifest.attributes.put('Build-Time', Utils.buildTime)
+    }
+  }
+  
+  if (clouldWebapp.exists() || cloudResources.exists() ) {
+  
+    task cloudWar(type: War, group: 'build') {
+      rootSpec.exclude "**/.gitkeep"
+      rootSpec.exclude "**/.gitignore"
+      archiveClassifier = 'cs'
+      duplicatesStrategy = 'exclude'
+    
+      if (cloudResources.exists()) {
+        classpath(cloudResources)
+      }
+      if (clouldWebapp.exists()) {
+        from(clouldWebapp)
+      }
+      if (project.file('build-war-cs.excludes').exists()) {
+        Utils.applyExcludes(rootSpec, project.file('build-war-cs.excludes').readLines())
+      }
+    }
+    build.dependsOn(cloudWar)
+  }
+  
+  eclipseWtpComponent.enabled = false
+}
+
+
+/**
+ * Configure GWT projects
+ */
+configure(subprojects.findAll() { gwtProjects.contains(it.name)  }) {
+  configurations {
+    gwt
+  }
+}
+
+
+
+/**
+ * Configure nodejs-requiring projects
+ */
+configure(subprojects.findAll() { nodeJsProjects.contains(it.name) }) {
+  apply plugin: 'nodejs'
+  
+  task setNpmRegistry(type: Npm, group: 'build') {
+    def npmRegistry = 'https://artifacthub-phx.oci.oraclecorp.com/api/npm/npmjs-remote'
+    
+    inputs.property('registry', npmRegistry)
+    outputs.file(project.file('.npmrc'))
+    addParams(['config', 'set', 'registry', npmRegistry])
+  }
+  
+  task cleanNpmCache(type: Npm, group: 'build') {
+    addParams(['cache', 'clean', '--force'])
+  }
+}
+
+
+/**
+ * Configure Jet client app projects.
+ */
+configure(subprojects.findAll() { jetClientProjects.contains(it.name) }) {
+  apply plugin: 'war'
+  
+  def versionFileTemplate = """// Generated by Gradle, ${Utils.buildTime}
+// Xstore version: ${Utils.shortBuildVersion}
+
+export const xstore_version = "${Utils.shortBuildVersion}";
+"""
+  if (!project.name.startsWith("xstore-sco")) {
+    versionFileTemplate += """  
+export let altQry = null;
+export let noHws = null;
+"""
+  }
+  
+  def devProps = project.file('xstjetdev.properties')
+  if (devProps.exists()) {
+    def props = Utils.loadProperties(devProps)
+  
+    versionFileTemplate += """
+// WARNING: THESE MUST NEVER BE DEFINED IN A PRODUCTION BUILD!!!
+altQry = "?FORM_FACTOR=${props.ff}&RETAIL_LOCATION_ID=${props.store}&WORKSTATION_ID=${props.wkstn}&SERVER_ADDRESS=${props.serverAddress}&SERVER_PORT=${props.serverPort}&INSTALLATION_TOKEN=${props.instToken}&HSC_PORT=${props.hscPort}&CUST_DISPLAY=${props.custDisplay}";
+noHws = ${props.noHws}; 
+"""
+  }
+  
+  def versionPropertyFile = project.file('build/work/version.properties')
+  def webDir = project.file('web')
+  def inputDir = project.file('src')
+  def inputComponentsDir = new File(inputDir, 'components')
+  def sharedFontsPath = rootProject.file('xstore-client-shared/src/styles/fonts')
+  def fontsPath = new File(inputDir, 'styles/fonts')
+  def sharedComponentsSrcPath = rootProject.file('xstore-client-shared/src/components/shared')
+  def sharedComponentsPath = new File(inputComponentsDir, 'shared')
+  def i18nInputDirs = [rootProject.file('xstore-client-shared/i18n_translations')]
+  
+  configurations {
+    cheetah
+    util
+    jetClient
+  }
+  
+  dependencies {
+    cheetah project(':cheetah')
+    util project(':util')
+  }
+
+  sourceSets {
+    // these projects don't have sources, but ship today as WARs so they're "java" from a certain point of view
+    main.java.srcDirs = []
+    main.resources.srcDirs = []
+    test.java.srcDirs = []
+    test.resources.srcDirs = []
+  }
+  
+  task generateCheetahTypescript(type: JavaExec, group: 'build') {
+    inputs.files(configurations.cheetah)
+    outputs.dirs(inputComponentsDir)
+    
+    classpath configurations.cheetah
+    mainClass = 'com.micros_retail.xm.tsgen.TypescriptGenerator'
+    args inputComponentsDir
+  }
+  
+  task generateVersionFile(group: 'build') {
+    def versionFile = new File(inputDir, 'xstore_version.ts')
+    
+    outputs.upToDateWhen {
+      return versionFile.exists() && versionFile.text.contains("xstore_version = \"${Utils.shortBuildVersion}\"") && (!devProps.exists() || devProps.lastModified() < versionFile.lastModified())
+    }
+    
+    doFirst {
+      if (versionFile.exists()) {
+        versionFile.delete()
+      }
+    }
+    doLast {
+      versionFile.text = versionFileTemplate
+    }
+  }
+  
+  task generateI18n(type: JavaExec, group: 'build') {
+    def inputDirs = i18nInputDirs
+    def destFile = new File(inputDir, 'xstore_i18n.ts')
+    if (project.file('i18n_translations').exists()) {
+      inputDirs = [project.file('i18n_translations')] + inputDirs
+    }
+  
+    inputs.files(configurations.util)
+    outputs.files(destFile)
+    
+    classpath configurations.util
+    mainClass = 'dtv.util.xstoremgwt.JETXstoreI18NGenerator'
+    args destFile, 'en'
+    
+    CommandLineArgumentProvider provider = {
+      return inputDirs.collect { it.absolutePath}
+    }
+    argumentProviders.add(provider)
+  }
+  
+  task stageJetFonts(group: 'build') {
+    def sourcePath = 'oracle/retail/xstore/font/jet/2501.0.1/xstoreJETfonts.tar.gz'
+    inputs.property('fontOrigin', sourcePath)
+    outputs.dir(sharedFontsPath)
+  
+    doLast {
+      def params = [
+        sourcePath: sourcePath,
+        destPath: sharedFontsPath,
+        cutDirs: 1
+      ]
+      Utils.stageArtifact(params)
+      
+      def notoSansDir = new File(sharedFontsPath, 'NotoSans')
+      if (notoSansDir.exists()) {
+        notoSansDir.deleteDir()
+      }
+    }
+  }
+  
+  task createSharedComponentsSymlink(group: 'build') {
+    outputs.upToDateWhen {
+      return sharedComponentsPath.exists()
+    }
+  
+    doLast {
+      Utils.createSymlink(sharedComponentsSrcPath, sharedComponentsPath)
+    }
+  }
+  
+  task createFontSymlink(group: 'build') {
+    outputs.upToDateWhen {
+      return fontsPath.exists()
+    }
+    
+    doLast {
+      Utils.createSymlink(sharedFontsPath, fontsPath)
+    }
+  }
+  createFontSymlink.dependsOn stageJetFonts
+  
+  // sco and sco manager console don't use these today
+  if (project.name.startsWith("xstore-sco")) {
+    tasks.stageJetFonts.enabled = false
+    tasks.createFontSymlink.enabled = false
+    tasks.createSharedComponentsSymlink.enabled = false
+    tasks.generateI18n.enabled = false
+  }
+  
+  task installJetTooling(type: Npm, dependsOn: setNpmRegistry, group: 'build') {
+    inputs.file('package.json')
+    outputs.dirs('node_modules')
+    outputs.files('package-lock.json')
+  
+    params += ["ci"]
+  }
+  
+  task updateJetTooling(type: Npm) {
+    doFirst {
+      delete 'package-lock.json', 'node_modules'
+    }
+    params += ["install"]
+  }
+  
+  task ojetBuild(type: Npx, dependsOn: [installJetTooling, generateCheetahTypescript, generateVersionFile, createSharedComponentsSymlink, createFontSymlink, generateI18n], group: 'build') {
+    inputs.dir(inputDir)
+    inputs.files(configurations.cheetah)
+    outputs.dirs(webDir)
+    
+    params += ['ojet', 'build', '--release']
+  }
+  
+  task ojetServe(type: Npx, dependsOn: ojetBuild, group: 'build') {
+    params += ['ojet', 'serve']
+  }
+  
+  task generateVersionPropertyFile(group: 'build') {
+    
+    outputs.upToDateWhen {
+      return versionPropertyFile.exists() && Objects.equals(Utils.shortBuildVersion, Utils.loadProperties(versionPropertyFile).get("pos.version"))
+    }
+    outputs.file(versionPropertyFile)
+    
+    doFirst {
+      if (versionPropertyFile.exists()) {
+        versionPropertyFile.delete()
+      }
+    }
+    doLast {
+      versionPropertyFile.text = """# Generated by Gradle, ${Utils.buildTime}
+pos.version=${Utils.shortBuildVersion}
+pos.full.version=${Utils.buildVersion}
+"""
+    }
+  }
+  
+  war {
+    webAppDirectory = file('webapp')
+    from(ojetBuild.outputs)
+    
+    from(generateVersionPropertyFile.outputs)
+    
+    manifest {
+      attributes(
+        'Built-By': System.getProperty("user.name"),
+        'Build-VM-Vendor': System.getProperty("java.vm.vendor"),
+        'Build-VM-Name': System.getProperty("java.vm.name"),
+        'Build-VM-Version': JavaVersion.current(),
+        'Build-OS': System.getProperty("os.name") + " (" + System.getProperty("os.arch") + ") version" +  System.getProperty("os.version"),
+        'Package-Identifier': project.provider({project.name + archiveClassifier.map{ it.isEmpty() ? it : '-' + it }.get() + " - " + Utils.buildVersion}),
+        'Implementation-Version': Utils.buildVersion,
+        'Implementation-Title': "${ant.project.name}",
+        'Implementation-Vendor': "Oracle Corporation"
+      )
+    }
+      
+    doFirst {
+      manifest.attributes.put('Build-Time', Utils.buildTime)
+    }
+  }
+  artifacts{ jetClient war }
+  war.dependsOn generateVersionPropertyFile
+  eclipseWtpComponent.enabled = false
+}
+
+/**
+ * Configure cloud-enabled projects
+ */
+configure(subprojects.findAll() { cloudEnabledProjects.contains(it.name) }) {
+  configurations {
+    cloudRuntime
+    cloudDevelop
+  }
+  
+  sourceSets {
+    main {
+      java {
+        compileClasspath += configurations.cloudRuntime
+        compileClasspath += configurations.cloudDevelop
+        
+      }
+    }
+    test {
+      java {
+        compileClasspath += configurations.cloudRuntime
+        compileClasspath += configurations.cloudDevelop
+      }
+    }
+  }
+  
+  tasks.named("javadoc") {
+    classpath += configurations.cloudRuntime
+    classpath += configurations.cloudDevelop
+  }
+  
+  eclipse {
+    classpath {
+      plusConfigurations += [configurations.cloudRuntime, configurations.cloudDevelop]
+    }
+  }
+}
+
+/**
+ * Configure projects leveraging code/binary generation
+ */
+configure(subprojects.findAll() { it.file('Generation.json').exists() }) {
+  def generationJsonFile = project.file('Generation.json')
+  def generationJson = new groovy.json.JsonSlurper().parse(generationJsonFile)
+  def generationDir = new File(project.buildDir, "generation")
+  def generatedSrcDir = new File(generationDir, "java")
+  def generatedBinaryDir = new File(generationDir, "binary")
+  def outputDir = generatedServiceContent.contains(project.name) ? new File(generatedSrcDir, "main/java") : generatedSrcDir
+  
+  configurations {
+    generation
+  }
+
+  if (generationJson.sourceGenerators != null) {
+    task cleanGeneratedSource(type: Delete) {
+      delete fileTree(outputDir)
+    }
+    
+    task generateSource(type: JavaExec, group: 'build') {
+      description = 'Runs source generation for this project.'
+      inputs.file generationJsonFile
+      inputs.files sourceSets.main.resources.srcDirs
+      
+      outputs.dir outputDir
+  
+      classpath configurations.generation
+      mainClass = 'oracle.retail.xstore.util.codegen.GenerateSources'
+  
+      doFirst {
+        args generatedSrcDir
+      }
+      mustRunAfter(cleanGeneratedSource)
+    }
+    sourceSets.main.java.srcDirs += outputDir
+    compileJava.dependsOn(generateSource)
+    eclipse.synchronizationTasks generateSource
+    eclipseClasspath.dependsOn(generateSource)
+    ideaModule.dependsOn(generateSource)
+    
+    task cleanGenerateSource(dependsOn: [cleanGeneratedSource, generateSource], group: 'build')
+  }
+  if (generationJson.binaryGenerators != null) {
+
+    task generateBinary(type: JavaExec, group: 'build') {
+      def commandFile = project.file('build/generateBinaryCommand')
+      ext.extraClasspath = null
+    
+      description = 'Runs source generation for this project.'
+      inputs.file generationJsonFile
+      inputs.files sourceSets.main.java.srcDirs
+      outputs.dir generatedBinaryDir  
+  
+      mainClass = 'oracle.retail.xstore.util.codegen.GenerateBinaries'
+      doFirst {
+        if (commandFile.exists()) {
+          commandFile.delete()
+        }
+        commandFile.parentFile.mkdirs()
+        
+        def classpath = configurations.generation
+        if (extraClasspath != null) {
+          classpath = extraClasspath
+          classpath += configurations.generation
+        } else {
+          classpath = configurations.generation
+        }
+        if (!classpath.empty) {
+          commandFile.text = "-cp " + classpath.asPath
+          jvmArgs += "@" + commandFile
+        }
+      }
+      
+      args generatedBinaryDir
+    }
+  
+    // Note: The project needs to do something with these outputs by leveraging generateBinary's outputs
+  }
+}
+
+configure(subprojects.findAll() { it.plugins.findPlugin("java") != null })  {
+  if (!it.name.contains("xcenter")) {
+    // Xstore has many test resources that severely break other projects and Eclipse has no native way to 
+    // prevent exporting "output" folders, which is where these land by default, breaking downstream projects.
+    // Include test resources as a classpath locations to avoid this.
+      
+    def testResourceDirs = sourceSets.test.resources.srcDirs;
+    sourceSets.test.resources.srcDirs = []
+  
+    dependencies {
+      testResourceDirs.each{
+        testRuntimeOnly  project.files(it)
+      } 
+    }
+  }
+  
+  /*
+   * DISCLAIMER
+   * Gradle follows the common strategy of assuming that you have a clean/orderly classpath with no collisions 
+   * and, therefore, no need for any ordering.  Unfortunately, in Xstore, we've got some edge cases where 
+   * things aren't quite so peachy (redundant classes, incomplete classes, overridden classes, etc.).  This 
+   * section serves as a crutch to allow our applications to build/run in this landscape for the time being.
+   * Some day, hopefully not too far in the future, we'll reach a point where this isn't needed and can delete 
+   * this.  Until that time, the block below pre-processes the classpath to add meaningful order to it.
+   * DISCLAIMER
+   */
+  eclipse {
+    classpath {
+      file {
+        whenMerged { effectiveClasspath ->
+          def mustBeFirst = []
+          def mustBeEarly = []
+          def mustBeLate = []
+          def mustBeLast = []
+          def classpath = new ArrayList<>(effectiveClasspath.entries)
+          def classpathIter = classpath.iterator()
+          while (classpathIter.hasNext()) {
+            def entry = classpathIter.next()
+            
+            if (entry instanceof org.gradle.plugins.ide.eclipse.model.SourceFolder 
+                || entry instanceof org.gradle.plugins.ide.eclipse.model.AbstractClasspathEntry
+                && new File(((org.gradle.plugins.ide.eclipse.model.AbstractClasspathEntry)entry).path).isDirectory()) {
+              // the project's own source/class folders need to be front and center
+              mustBeFirst += entry
+              classpathIter.remove()
+            } else if (entry.toString().contains("gwt-dev") || entry.toString().contains("gwt-user")) {
+              // Eclipse needs to obtain these from the plugin
+              classpathIter.remove()  
+            } else if (entry instanceof org.gradle.plugins.ide.eclipse.model.AbstractClasspathEntry
+                &&((org.gradle.plugins.ide.eclipse.model.AbstractClasspathEntry)entry).path.endsWith(".jar")) {
+              // any direct deps it has should come next (this helps to override things like RPE's broken jar)
+              mustBeEarly += entry
+              classpathIter.remove()  
+            } else if (entry instanceof org.gradle.plugins.ide.eclipse.model.ProjectDependency) {
+              // any projects it depends on later on
+              mustBeLate += entry
+              classpathIter.remove()
+            } 
+            else if (entry.toString().contains("GWT_CONTAINER")) {
+              // the GWT plugin needs to be at the very end
+              mustBeLast += entry
+              classpathIter.remove()  
+            } else if (entry.toString().contains("rpe")) {
+              // incomplete classes pollute the classpath and must also go last
+              mustBeLast += entry
+              classpathIter.remove()  
+            } else {
+              // stays as is
+            }
+          }
+          
+          // tack the "must be early" stuff to the start
+          classpath.addAll(0, mustBeEarly)
+          
+          // tack the "must be first" stuff to the start
+          classpath.addAll(0, mustBeFirst)
+          
+          // tack the "must be late" stuff to the end
+          classpath.addAll(mustBeLate)
+          
+          // tack the "must be last" stuff to the very end
+          classpath.addAll(mustBeLast)
+          
+          // return the result
+          effectiveClasspath.setEntries(classpath)
+        }
+      }
+    }
+  }
+}

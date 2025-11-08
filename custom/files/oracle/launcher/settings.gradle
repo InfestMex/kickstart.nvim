@@ -1,0 +1,20 @@
+pluginManagement {
+    repositories {
+        maven { url = 'https://artifacthub-phx.oci.oraclecorp.com/oscs-oci-oracledist/' }
+        maven { url = 'https://artifacthub-phx.oci.oraclecorp.com/oscs-oci-tpa-orclapproved/' }
+        maven { url = 'https://artifacthub-phx.oci.oraclecorp.com/rgbu-libs-release-local' }
+        maven {
+            url = 'https://artifacthub-phx.oci.oraclecorp.com/rgbu-libs-release'
+            metadataSources {
+                mavenPom()
+                artifact()
+            }
+        }
+        maven { url = 'https://artifacthub-phx.oci.oraclecorp.com/oscs-virtual' }
+    }
+}
+
+rootProject.name = 'launcher'
+
+
+includeBuild '/home/viaguila/dev/current/git/xstore'

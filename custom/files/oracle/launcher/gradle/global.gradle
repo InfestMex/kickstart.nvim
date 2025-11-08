@@ -1,0 +1,106 @@
+/**
+ *  This script contains root-level global configuraitons used by all projects.
+ */
+
+allprojects {
+  repositories {
+      maven {
+        url = "${rootProject.file('lib/local-repo/local-oss').toURI().toURL()}"
+        metadataSources {
+            artifact()
+        }
+      }  
+      ivy { 
+        url = 'https://artifacthub-phx.oci.oraclecorp.com/rgbu-libs-snapshot-local'
+        patternLayout {
+            artifact '[orgPath]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]'
+            ivy '[orgPath]/[module]/[revision]/ivy.xml'
+        }
+      }
+      maven { 
+        url = 'https://artifacthub-phx.oci.oraclecorp.com/oscs-oci-oracledist/'
+        metadataSources {
+            artifact()
+        }
+      }
+      maven { 
+        url = 'https://artifacthub-phx.oci.oraclecorp.com/oscs-oci-tpa-orclapproved/'
+        metadataSources {
+            artifact()
+        }
+      }
+      maven { 
+        url = 'https://artifacthub-phx.oci.oraclecorp.com/rgbu-libs-release'
+        metadataSources {
+            artifact()
+        }
+      }
+      maven { 
+        url = 'https://artifacthub-phx.oci.oraclecorp.com/helidon-release-local'
+        metadataSources {
+            artifact()
+        }
+      }
+      maven { 
+        url = 'https://artifacthub-phx.oci.oraclecorp.com/jdbc-dev-local/'
+        metadataSources {
+            artifact()
+        }
+      }
+      maven { 
+        url = 'https://artifacthub-phx.oci.oraclecorp.com/oscs-virtual'
+        metadataSources {
+            artifact()
+        }
+      }
+      maven { 
+        url = 'https://artifacthub-phx.oci.oraclecorp.com/rgbu-eftlink'
+        metadataSources {
+            artifact()
+        }
+      }
+      ivy { 
+        url = 'https://artifacthub-phx.oci.oraclecorp.com/rgbu-libs-release-local'
+        patternLayout {
+            artifact '[orgPath]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]'
+            ivy '[orgPath]/[module]/[revision]/ivy.xml'
+        }
+      }
+      ivy { 
+        url = 'https://artifacthub-phx.oci.oraclecorp.com/rgbu-ext-snapshot-local'
+        patternLayout {
+            artifact '[orgPath]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]'
+            ivy '[orgPath]/[module]/[revision]/ivy.xml'
+        }
+      }
+      ivy { 
+        url = 'https://artifacthub-phx.oci.oraclecorp.com/rgbu-ext-release-local'
+        patternLayout {
+            artifact '[orgPath]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]'
+            ivy '[orgPath]/[module]/[revision]/ivy.xml'
+        }
+      }
+      
+      // Unfortunately, the ORPE jar is uploaded in a nonstandard way that Gradle can't get normally.  
+      ivy { 
+        url = 'https://artifacthub-phx.oci.oraclecorp.com/rgbu-libs-release-local'
+        patternLayout {
+            artifact '[orgPath]/[module]/[revision]/promote-offline-25.1.301.jar'
+            ivy '[orgPath]/[module]/[revision]/ivy.xml'
+        }
+        metadataSources {
+            artifact()
+        }
+      }
+    task printAllDependencies(type: DependencyReportTask) {}
+  }
+} // end all projects
+
+
+subprojects {
+  configurations {
+    deployables
+  }
+  
+  apply plugin: 'utils'
+}
