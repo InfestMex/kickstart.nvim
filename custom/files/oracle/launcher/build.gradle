@@ -9,12 +9,21 @@ plugins {
   id 'maven-publish'
 }
 
+  def xstore_path = new File('/home/viaguila/dev/current/git/xstore')
+  def overlay = new File(xstore_path, 'xst_pos')
+
 // repositories {
 //   mavenCentral()
 // }
 repositories {
     maven {
       url = "${rootProject.file('lib/local-repo/local-oss').toURI().toURL()}"
+      metadataSources {
+          artifact()
+      }
+    }  
+    maven {
+      url = "${new File(xstore_path, 'lib/local-repo/local-oss').toURI().toURL()}"
       metadataSources {
           artifact()
       }
@@ -188,8 +197,6 @@ task runXstoreServer(type: JavaExec) {
   //   }
   // }
 
-  def xstore_path = new File('/home/viaguila/dev/current/git/xstore')
-  def overlay = new File(xstore_path, 'xst_pos')
   doFirst(){
     xstore_path = new File('/home/viaguila/dev/current/git/xstore')
     overlay = new File(xstore_path, 'xst_pos')
