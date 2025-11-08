@@ -207,9 +207,7 @@ task runXstoreServer(type: JavaExec) {
 
   
   // the main task action is the (forked) Xunit run
-  classpath = project.files(new File(overlay, 'cust_config'), new File(xstore_path, 'config/config'), sourceSets.main.output, configurations.testRuntimeClasspath,  configurations.xstoreRuntime) 
-  // classpath = project.files(project.file('cust_config'), rootProject.file('config/config'), sourceSets.main.output, configurations.testRuntimeClasspath)
-  // classpath = project.files(project(':xstore:xst_pos').sourceSets.main.runtimeClasspath, project.file('cust_config'), rootProject.file('config/config'), sourceSets.main.output, configurations.testRuntimeClasspath  ) 
+  classpath = project.files(new File(overlay, 'cust_config'), new File(xstore_path, 'config/config'), new File(overlay, 'build/classes/java/main'), sourceSets.main.output, configurations.testRuntimeClasspath,  configurations.xstoreRuntime) 
   mainClass = 'dtv.pos.framework.StationController'
   workingDir = new File(xstore_path, 'config')
   
@@ -221,12 +219,12 @@ task runXstoreServer(type: JavaExec) {
   // systemProperty 'xunit.captureonfail', 'true'
   // systemProperty 'xunit.tags.enabled', 'SMOKE_TEST, OPENING, MINIMIZEFRAME'
   // systemProperty 'xunit.shutdownOnCompletion', 'true'
-  systemProperty 'user.dir.local', project.projectDir
-  systemProperty 'xstore.config.path.base.features', ':cust/loyalty:cust/loyalty/award:cust/registry:test:dev_config/db/oracle:dev_config/cp_ci'
-  systemProperty 'xstore.config.path.global.extensions', ':dev_config:local'
-  systemProperty 'dtv.system.properties.location', "${project.projectDir}/dev/local/xstore.properties"
-  systemProperty 'dtv.util.crypto.SecretKeyCipherManager.keyStoreDirectory', "${project.projectDir}/res/keys"
-  systemProperty 'dtv.util.crypto.DtvKeyStoreManager.keyStoreDirectory', "${project.projectDir}/res/keys"
+  systemProperty 'user.dir.local', overlay
+  // systemProperty 'xstore.config.path.base.features', ':cust/loyalty:cust/loyalty/award:cust/registry:test:dev_config/db/oracle:dev_config/cp_ci'
+  // systemProperty 'xstore.config.path.global.extensions', ':dev_config:local'
+  systemProperty 'dtv.system.properties.location', new File(overlay, 'dev/local/xstore.properties')
+  systemProperty 'dtv.util.crypto.SecretKeyCipherManager.keyStoreDirectory', new File(overlay, '/res/keys')
+  systemProperty 'dtv.util.crypto.DtvKeyStoreManager.keyStoreDirectory', new File(overlay, '/res/keys')
   args '-Xms512m', '-Xmx1024m', '-XX:+ForceTimeHighResolution', '-XX:MetaspaceSize=128m', '-XX:MaxMetaspaceSize=512m', '-XX:+UnlockCommercialFeatures', '-XX:+FlightRecorder', '-XX:+UnlockDiagnosticVMOptions', '-XX:+DebugNonSafepoints'
   ignoreExitValue = true
   
