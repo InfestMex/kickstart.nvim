@@ -2,7 +2,11 @@
 // apply from: 'gradle/stereotypes.gradle'
 
 plugins {
+  id 'eclipse'
+  id 'idea'
   id 'java'
+  id 'java-library'
+  id 'maven-publish'
 }
 
 // repositories {
@@ -110,22 +114,54 @@ configurations {
 }
 
 
-dependencies {
-  // implementation project(':xstore:xst_pos')
-  // implementation 'xstore:xst_pos:unspecified'
-  // implementation 'xstore:xst_pos'
-  implementation(group: 'xstore', name: 'xst_pos', configuration: 'xstoreRuntime')
-}
-
-// configurations.all {
-//   resolutionStrategy.dependencySubstitution {
-//     substitute(module('xstore:xst_pos')).with(project(':xst_pos'))
-//   }
+// dependencies {
+//   // implementation project(':xstore:xst_pos')
+//   // implementation 'xstore:xst_pos:unspecified'
+//   // implementation 'xstore:xst_pos'
+//   implementation(group: 'xstore', name: 'xst_pos', configuration: 'xstoreRuntime')
 // }
 
-task runTestttt(type: JavaExec){
-  mainClass = 'dtv.pos.framework.StationController'
-  classpath = configurations.runtimeClasspath
+
+dependencies {
+  // api project(':config')
+  // api project(':pos')
+  // api project(':xunit-config')
+  // api project(':xunit')
+  // api project(':util')
+  // api project(':crypto-convert')
+  // api project(':crypto-encrypt')
+  // api project(':crypto-generate')
+  // api jetty //TODO: is this need!?!?!
+  api(group: 'xstore', name: 'config')
+  api(group: 'xstore', name: 'pos')
+  api(group: 'xstore', name: 'xunit-config')
+  api(group: 'xstore', name: 'xunit')
+  api(group: 'xstore', name: 'util')
+  api(group: 'xstore', name: 'crypto-convert')
+  api(group: 'xstore', name: 'crypto-encrypt')
+  api(group: 'xstore', name: 'crypto-generate')
+
+  // xstoreRuntime project(path: ':config', configuration: 'xstoreRuntime')
+  // xstoreRuntime project(path: ':config', configuration: 'linux64')
+  // xstoreRuntime project(path: ':config', configuration: 'windows64')
+  // xstoreRuntime project(path: ':pos', configuration: 'xstoreRuntime')
+  // xstoreRuntime project(path: ':util', configuration: 'xstoreRuntime')
+  xstoreRuntime api(group: 'xstore', name: 'config', configuration: 'xstoreRuntime')
+  xstoreRuntime api(group: 'xstore', name: 'config', configuration: 'linux64')
+  xstoreRuntime api(group: 'xstore', name: 'config', configuration: 'windows64')
+  xstoreRuntime api(group: 'xstore', name: 'pos', configuration: 'xstoreRuntime')
+  xstoreRuntime api(group: 'xstore', name: 'util', configuration: 'xstoreRuntime')
+  
+  // dbmake implementation(group: 'xstore', name: 'database', configuration: 'deployables')
+  // xadminDatabase implementation(group: 'xstore', name: 'xcenter-admin', configuration: 'dbScripts')
+  
+  // mrAntTasks implementation(group: 'xstore', name: 'mr-ant-tasks')
+  
+  // dtxGeneration implementation(group: 'xstore', name: 'data2')
+  
+  // xstRuntime(project(':hardware-devqa')) { transitive = false }
+  
+  // implementation new File('/home/viaguila/dev/current/git/xstore/xst_pos/dev')
 }
 
 task runXstoreServer(type: JavaExec) {
