@@ -207,7 +207,16 @@ task runXstoreServer(type: JavaExec) {
 
   
   // the main task action is the (forked) Xunit run
-  classpath = project.files(new File(overlay, 'cust_config'), new File(xstore_path, 'config/config'), new File(overlay, 'build/classes/java/main'), sourceSets.main.output, configurations.testRuntimeClasspath,  configurations.xstoreRuntime) 
+  // Add the config directory directly to the classpath
+  classpath = project.files(
+    new File(overlay, 'cust_config'),
+    new File(xstore_path, 'config/build/classes/java/main'),
+    new File(xstore_path, 'config-shared/build/classes/java/main'),
+    new File(overlay, 'build/classes/java/main'),
+    sourceSets.main.output,
+    configurations.testRuntimeClasspath,
+    configurations.xstoreRuntime
+  )
   mainClass = 'dtv.pos.framework.StationController'
   workingDir = new File(xstore_path, 'config')
   
@@ -220,8 +229,8 @@ task runXstoreServer(type: JavaExec) {
   // systemProperty 'xunit.tags.enabled', 'SMOKE_TEST, OPENING, MINIMIZEFRAME'
   // systemProperty 'xunit.shutdownOnCompletion', 'true'
   systemProperty 'user.dir.local', overlay
-  // systemProperty 'xstore.config.path.base.features', ':cust/loyalty:cust/loyalty/award:cust/registry:test:dev_config/db/oracle:dev_config/cp_ci'
-  // systemProperty 'xstore.config.path.global.extensions', ':dev_config:local'
+  systemProperty 'xstore.config.path.base.features', ':cust/registry:invoice:authprocessor/eftlink:authprocessor/eftlink/giftcard:vouchers:countrypack/voucherstest:dev_config/db/oraclepdb'
+  systemProperty 'xstore.config.path.global.extensions', ':dev_config:local'
   systemProperty 'dtv.system.properties.location', new File(overlay, 'dev/local/xstore.properties')
   systemProperty 'dtv.util.crypto.SecretKeyCipherManager.keyStoreDirectory', new File(overlay, '/res/keys')
   systemProperty 'dtv.util.crypto.DtvKeyStoreManager.keyStoreDirectory', new File(overlay, '/res/keys')
