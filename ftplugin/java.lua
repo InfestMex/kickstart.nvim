@@ -41,6 +41,10 @@ local config = {
           profile = 'xstore',
         },
       },
+      memberSortOrder = { 'SF', 'SI', 'SM', 'F', 'I', 'C', 'M', 'T' },
+      symbols = {
+        includeSourceMethodDeclarations = true,
+      },
     },
   },
 
