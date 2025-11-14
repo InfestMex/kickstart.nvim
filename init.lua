@@ -168,7 +168,7 @@ vim.opt_local.conceallevel = 2
 vim.opt.shiftwidth = 2
 
 -- ignore white spaces when diff mode
-vim.opt.diffopt:append 'iwhite'
+vim.opt.diffopt:append 'iwhiteall'
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
