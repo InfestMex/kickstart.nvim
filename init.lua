@@ -168,7 +168,7 @@ vim.opt_local.conceallevel = 2
 vim.opt.shiftwidth = 2
 
 -- ignore white spaces when diff mode
-vim.opt.diffopt:append 'iwhite'
+vim.opt.diffopt:append 'iwhiteall'
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
@@ -905,7 +905,7 @@ require('lazy').setup({
         -- Disable "format_on_save lsp_fallback" for languages that don't
         -- have a well standardized coding style. You can add additional
         -- languages here or re-enable it for the disabled ones.
-        local disable_filetypes = { c = true, cpp = true, xml = true, xsd = true, dtx = true }
+        local disable_filetypes = { c = true, cpp = true, json = true, xml = true, xsd = true, dtx = true }
         if disable_filetypes[vim.bo[bufnr].filetype] then
           return nil
         else

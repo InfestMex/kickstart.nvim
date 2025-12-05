@@ -28,6 +28,9 @@ export PSQL_HOME="/c/Program Files/PostgreSQL/16/bin"
 # Update the PATH variable, using ':' as the separator for Bash
 export PATH="$LOCAL_HOME/scripts:$SHARED_HOME/scripts:$M2_HOME/bin:$PATH:$NVIM_BIN:$GCC_HOME:$RIPGREP_HOME:$PYTHON_HOME:$FD_HOME:$PSQL_HOME"
 
+# usefull commands:
+alias more="less -de"
+
 # Display a confirmation message with the new PATH
 echo "Environment variables have been updated."
 # echo "New PATH: $PATH"
