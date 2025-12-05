@@ -1200,6 +1200,17 @@ require('lazy').setup({
   {
     'GeorgesAlkhouri/nvim-aider',
     cmd = 'Aider',
+    -- options
+    opts = {
+      -- Command that executes Aider
+      aider_cmd = 'ocaider',
+      -- Command line arguments passed to aider
+      args = {
+        '--no-auto-commits',
+        '--pretty',
+        -- "--stream",
+      },
+    },
     -- Example key mappings for common actions:
     keys = {
       { '<leader>a/', '<cmd>Aider toggle<cr>', desc = 'Toggle Aider' },
