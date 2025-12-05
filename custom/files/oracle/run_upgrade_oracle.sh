@@ -1,7 +1,7 @@
 #!/bin/bash
 work_dir="/home/viaguila/dev/current/git/xstore/data2/test-db/expected/db/oracle"
 dest_dir="/home/viaguila/dev/current/git/xstore/dtx/build/dtxGeneration/scripts/db/oracle/"
-schema_name=xstore_25_223
+schema_name=xstore_26_223
   
 # make a copy of the file
 cp -r $work_dir/db-upgrade.sql $dest_dir/db-upgrade_edited.sql
@@ -27,5 +27,5 @@ unset https_proxy
   
 echo "Using scehma: $schema_name"
 # Run the SQL script
-echo exit | sqlplus dtv/dtv@localhost/xstore_25_223 @$dest_dir/db-upgrade_edited.sql > $dest_dir/result.log
+echo exit | sqlplus dtv/dtv@localhost/$schema_name @$dest_dir/db-upgrade_edited.sql > $dest_dir/result.log
 echo "query executed, result at [$dest_dir/result.log], exiting..."

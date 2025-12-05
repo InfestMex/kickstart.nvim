@@ -1,7 +1,7 @@
 #!/bin/bash
 work_dir="/home/viaguila/dev/current/git/xstore/data2/test-db/expected/db/mssql/"
 dest_dir="/home/viaguila/dev/current/git/xstore/dtx/build/dtxGeneration/scripts/db/mssql/"
-schema_name=xstore_25_223
+schema_name=xstore_26_223
 
 # make a copy of the file
 cp -r $work_dir/db-upgrade.sql $dest_dir/db-upgrade_edited.sql
