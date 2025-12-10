@@ -19,6 +19,8 @@ vim.defer_fn(function()
     { '<leader>roc', group = '[R]un [O]racle [C]urrent' },
     { '<leader>roca', group = '[R]un [O]racle [C]urrent [A]pp' },
     { '<leader>rod', group = '[R]un [O]racle [D]ata base' },
+    { '<leader>rodc', group = '[R]un [O]racle [D]ataBase [C]ompare' },
+    { '<leader>rodu', group = '[R]un [O]racle [D]ataBase [U]pgrade' },
     { '<leader>roq', group = '[R]un [O]racle [Q] v22' },
     { '<leader>row', group = '[R]un [O]racle [W] v23' },
     { '<leader>rowb', group = '[R]un [O]racle [W] v23 [B]uild' },
@@ -426,14 +428,14 @@ end, {
 
 vim.keymap.set('n', '<leader>rodum', function()
   local config_path = vim.fn.stdpath 'config'
-  -- vim.notify('Config folder = ' .. config_path, vim.log.levels.WARN, { title = 'GK commands' })
+  -- vim.notify('Config folder = ' .. config_path, vim.log.levels.WARN, { title = 'Oracle commands' })
 
   -- Construct the full path using the environment variable and correct backslashes for Lua
   local script_full_path = config_path .. '/custom/files/oracle/run_upgrade_mssql.sh'
-  -- vim.notify('Full path = ' .. script_full_path, vim.log.levels.WARN, { title = 'GK commands' })
+  -- vim.notify('Full path = ' .. script_full_path, vim.log.levels.WARN, { title = 'Oracle commands' })
 
   local git_bash_path = vim.fn.fnameescape(script_full_path)
-  -- vim.notify('Git-bash path = ' .. git_bash_path, vim.log.levels.WARN, { title = 'GK commands' })
+  -- vim.notify('Git-bash path = ' .. git_bash_path, vim.log.levels.WARN, { title = 'Oracle commands' })
 
   if vim.fn.filereadable(git_bash_path) ~= 1 then
     vim.notify('File do not exist path = ' .. git_bash_path, vim.log.levels.ERROR, { title = 'Oracle commands' })
@@ -441,12 +443,12 @@ vim.keymap.set('n', '<leader>rodum', function()
 
   -- Construct the command to be executed by bash
   local command_to_run = git_bash_path
-  vim.notify('Command to run = ' .. command_to_run, vim.log.levels.WARN, { title = 'Oracle commands' })
+  vim.notify('Command to run = ' .. command_to_run, vim.log.levels.INFO, { title = 'Oracle commands' })
 
   -- Ensure bash terminal configuration
   vim.cmd 'setlocal shellcmdflag=-c'
 
-  -- vertical split
+  -- split
   vim.cmd 'sp'
 
   -- Construct and execute the command
@@ -460,14 +462,14 @@ end, {
 
 vim.keymap.set('n', '<leader>roduo', function()
   local config_path = vim.fn.stdpath 'config'
-  -- vim.notify('Config folder = ' .. config_path, vim.log.levels.WARN, { title = 'GK commands' })
+  -- vim.notify('Config folder = ' .. config_path, vim.log.levels.WARN, { title = 'Oracle commands' })
 
   -- Construct the full path using the environment variable and correct backslashes for Lua
   local script_full_path = config_path .. '/custom/files/oracle/run_upgrade_oracle.sh'
-  -- vim.notify('Full path = ' .. script_full_path, vim.log.levels.WARN, { title = 'GK commands' })
+  -- vim.notify('Full path = ' .. script_full_path, vim.log.levels.WARN, { title = 'Oracle commands' })
 
   local git_bash_path = vim.fn.fnameescape(script_full_path)
-  -- vim.notify('Git-bash path = ' .. git_bash_path, vim.log.levels.WARN, { title = 'GK commands' })
+  -- vim.notify('Git-bash path = ' .. git_bash_path, vim.log.levels.WARN, { title = 'Oracle commands' })
 
   if vim.fn.filereadable(git_bash_path) ~= 1 then
     vim.notify('File do not exist path = ' .. git_bash_path, vim.log.levels.ERROR, { title = 'Oracle commands' })
@@ -475,7 +477,7 @@ vim.keymap.set('n', '<leader>roduo', function()
 
   -- Construct the command to be executed by bash
   local command_to_run = git_bash_path
-  vim.notify('Command to run = ' .. command_to_run, vim.log.levels.WARN, { title = 'Oracle commands' })
+  vim.notify('Command to run = ' .. command_to_run, vim.log.levels.INFO, { title = 'Oracle commands' })
 
   -- Ensure bash terminal configuration
   vim.cmd 'setlocal shellcmdflag=-c'
@@ -490,6 +492,74 @@ end, {
   noremap = true,
   silent = true,
   desc = '[R]un [O]racle [D]ataBase [U]pgrade-script [O]racle',
+})
+
+vim.keymap.set('n', '<leader>rodco', function()
+  local config_path = vim.fn.stdpath 'config'
+  -- vim.notify('Config folder = ' .. config_path, vim.log.levels.WARN, { title = 'Oracle commands' })
+
+  -- Construct the full path using the environment variable and correct backslashes for Lua
+  local script_full_path = config_path .. '/custom/files/oracle/run_dbcomparison_oracle.sh'
+  -- vim.notify('Full path = ' .. script_full_path, vim.log.levels.WARN, { title = 'Oracle commands' })
+
+  local git_bash_path = vim.fn.fnameescape(script_full_path)
+  -- vim.notify('Git-bash path = ' .. git_bash_path, vim.log.levels.WARN, { title = 'Oracle commands' })
+
+  if vim.fn.filereadable(git_bash_path) ~= 1 then
+    vim.notify('File do not exist path = ' .. git_bash_path, vim.log.levels.ERROR, { title = 'Oracle commands' })
+  end
+
+  -- Construct the command to be executed by bash
+  local command_to_run = git_bash_path
+  vim.notify('Command to run = ' .. command_to_run, vim.log.levels.INFO, { title = 'Oracle commands' })
+
+  -- Ensure bash terminal configuration
+  vim.cmd 'setlocal shellcmdflag=-c'
+
+  -- split
+  vim.cmd 'sp'
+
+  -- Construct and execute the command
+  -- vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer
+  vim.cmd('terminal ' .. command_to_run)
+end, {
+  noremap = true,
+  silent = true,
+  desc = '[R]un [O]racle [D]ataBase [C]ompare [O]racle',
+})
+
+vim.keymap.set('n', '<leader>rodcm', function()
+  local config_path = vim.fn.stdpath 'config'
+  -- vim.notify('Config folder = ' .. config_path, vim.log.levels.WARN, { title = 'Oracle commands' })
+
+  -- Construct the full path using the environment variable and correct backslashes for Lua
+  local script_full_path = config_path .. '/custom/files/oracle/run_dbcomparison_mssql.sh'
+  -- vim.notify('Full path = ' .. script_full_path, vim.log.levels.WARN, { title = 'Oracle commands' })
+
+  local git_bash_path = vim.fn.fnameescape(script_full_path)
+  -- vim.notify('Git-bash path = ' .. git_bash_path, vim.log.levels.WARN, { title = 'Oracle commands' })
+
+  if vim.fn.filereadable(git_bash_path) ~= 1 then
+    vim.notify('File do not exist path = ' .. git_bash_path, vim.log.levels.ERROR, { title = 'Oracle commands' })
+  end
+
+  -- Construct the command to be executed by bash
+  local command_to_run = git_bash_path
+  vim.notify('Command to run = ' .. command_to_run, vim.log.levels.INFO, { title = 'Oracle commands' })
+
+  -- Ensure bash terminal configuration
+  vim.cmd 'setlocal shellcmdflag=-c'
+
+  -- split
+  vim.cmd 'sp'
+
+  -- Construct and execute the command
+  -- vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer
+  vim.cmd('terminal ' .. command_to_run)
+end, {
+  noremap = true,
+  silent = true,
+  desc = '[R]un [O]racle [D]ataBase [C]ompare [M]ssql',
 })
 
 vim.keymap.set('n', '<leader>roxc', function()
