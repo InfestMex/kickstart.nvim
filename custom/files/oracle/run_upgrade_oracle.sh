@@ -19,11 +19,8 @@ echo "variables placeholders replaced"
 # Ensure replaced
 # grep -E "\\$\\(" $dest_dir/db-upgrade_edited.sql
 
-# echo "http_dooxy: $http_proxy"
-# echo "https_proxy: $https_proxy"
-# echo "no_proxy: $no_proxy"
-unset http_proxy
-unset https_proxy
+# ensure the proxy is not set, will cause issues in sqlplus
+source ~/unset_proxy.sh
   
 echo "Using scehma: $schema_name"
 # Run the SQL script
