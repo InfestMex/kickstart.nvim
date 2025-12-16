@@ -86,7 +86,7 @@ vim.keymap.set(
   'n', -- Normal mode
   '<leader>rgep', -- The key sequence (e.g., \sh with default leader)
   function()
-    local run_pos_file = vim.fn.stdpath 'config' .. '/custom/files/gk/EXP/POS_sandbox__9091.sh'
+    local run_pos_file = vim.fn.stdpath 'config' .. '/custom/files/gk/EXP/POS_sandbox__t128.sh'
     run_sh_file_to_log_buffer(run_pos_file)
   end,
   { silent = true, desc = '[R]un [G]K [E]XP [P]os' }

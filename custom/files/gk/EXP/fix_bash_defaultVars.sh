@@ -5,7 +5,7 @@
 echo "Fixing some valies for Git-Bash"
 
 # Define the input file
-CMD_FILE="/c/DEV_HOME/GXC/ws-pos/git/pos/build/pos-full/pos-full-sandbox-cloud/_sandbox_9091/defaultVars.cmd"
+CMD_FILE="/c/DEV_HOME/GXC/ws-pos/git/pos/build/pos-full/pos-full-sandbox-cloud/_sandbox_t128/defaultVars.cmd"
 
 # Comment out lines 42 through 47
 sed -i '42,49{/^REM /!s/^/REM /}' "$CMD_FILE"

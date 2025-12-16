@@ -170,16 +170,10 @@ vim.opt.shiftwidth = 2
 -- ignore white spaces when diff mode
 vim.opt.diffopt:append 'iwhiteall'
 
--- Always use bash style, do not use windows terminal config
+-- Always use bash style, do not use windows terminal config because bash terminal is expected
 if vim.fn.has 'win32' == 1 then
-  -- Apunta directamente al ejecutable de bash si 'bash' a secas falla
-  -- Ajusta la ruta si tu git no está en Program Files
-  vim.opt.shell = 'C:/Program Files/Git/bin/bash.exe'
-
-  -- Flags correctas para bash
   vim.opt.shellcmdflag = '-c'
 
-  -- IMPORTANTE: Esto evita que Neovim envuelva el comando en comillas extrañas
   vim.opt.shellquote = ''
   vim.opt.shellxquote = ''
 end

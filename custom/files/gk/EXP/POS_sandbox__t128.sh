@@ -10,7 +10,10 @@ cd "$(dirname "$0")"
 ./fix_bash_defaultVars.sh
 
 # Change to the specific POS sandbox directory
-cd /c/DEV_HOME/GXC/ws-pos/git/pos/build/pos-full/pos-full-sandbox-cloud/_sandbox_9091/
+cd /c/DEV_HOME/GXC/ws-pos/git/pos/build/pos-full/pos-full-sandbox-cloud/_sandbox_t128/
+
+# use java 1.8
+export JAVA_HOME="$SHARED_HOME/TOOLS/java/1.8.0_111"
 
 # Run the POS
 echo "Running run_tpos.cmd..."
