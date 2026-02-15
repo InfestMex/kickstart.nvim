@@ -388,6 +388,21 @@ end, {
   desc = '[R]un [O]racle [C]urrent [A]pp [C]lassic',
 })
 
+vim.keymap.set('n', '<leader>rocad', function()
+  --NOTE: the current command assume the project folder and the gradle task exist
+
+  -- split
+  vim.cmd 'sp'
+
+  vim.cmd 'enew' -- Create a new empty buffer
+  vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer
+  vim.cmd 'term ./config/download/prepare-payload.sh && ./gradlew runDataLoader --console=plain' -- Run the command in a terminal
+end, {
+  noremap = true,
+  silent = true,
+  desc = '[R]un [O]racle [C]urrent [A]pp [D]ataLoader',
+})
+
 vim.keymap.set('n', '<leader>rocas', function()
   -- -- split
   -- vim.cmd 'sp'
@@ -756,7 +771,7 @@ function run_java_test_method(debug)
   local test_runner = get_test_runner(project_name, test_name, debug)
   if test_runner then
     -- vertical split
-    vim.cmd 'vsp'
+    vim.cmd 'sp'
 
     -- Ensure bash terminal configuration
     vim.cmd ':setlocal shellcmdflag=-c'
@@ -777,7 +792,7 @@ function run_java_test_class(debug)
   local test_runner = get_test_runner(project_name, test_name, debug)
   if test_runner then
     -- vertical split
-    vim.cmd 'vsp'
+    vim.cmd 'sp'
 
     -- Ensure bash terminal configuration
     vim.cmd ':setlocal shellcmdflag=-c'
