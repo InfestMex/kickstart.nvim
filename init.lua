@@ -178,6 +178,11 @@ if vim.fn.has 'win32' == 1 then
   vim.opt.shellxquote = ''
 end
 
+local aiderCommand = 'ocaider'
+if vim.fn.has 'win32' == 1 then
+  aiderCommand = 'aider'
+end
+
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
@@ -1219,7 +1224,7 @@ require('lazy').setup({
     -- options
     opts = {
       -- Command that executes Aider
-      aider_cmd = 'ocaider',
+      aider_cmd = aiderCommand,
       -- Command line arguments passed to aider
       args = {
         '--no-auto-commits',
