@@ -1,5 +1,14 @@
 -- See `:help vim.lsp.start` for an overview of the supported `config` options.
-local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':p:h:t')
+
+local current_dir = vim.fn.fnamemodify(vim.fn.getcwd(), ':t')
+local project_name
+if current_dir == 'xstore' then
+  project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':h:h:t')
+else
+  project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':p:h:t')
+end
+
+-- TODO: if projact_name=xstore, move two folders avobe to get the correct version
 
 local config = {
   name = 'jdtls',
@@ -29,6 +38,21 @@ local config = {
   -- for a list of options
   settings = {
     java = {
+      configuration = {
+        -- See https://github.com/eclipse/eclipse.jdt.ls/wiki/Running-the-JAVA-LS-server-from-the-command-line#initialize-request
+        -- And search for `interface RuntimeOption`
+        -- The `name` is NOT arbitrary, but must match one of the elements from `enum ExecutionEnvironment` in the link above
+        runtimes = {
+          {
+            name = 'JavaSE-21',
+            path = '/usr/lib/jvm/java-21-openjdk-21.0.9.0.10-2.0.1.el9.x86_64',
+          },
+          {
+            name = 'JavaSE-11',
+            path = '/usr/lib/jvm/java-11-openjdk-11.0.25.0.9-7.0.1.el9.x86_64',
+          },
+        },
+      },
       format = {
         enabled = true,
         -- Formatting works by default, but you can refer to a specific file/URL if you choose
