@@ -2,6 +2,7 @@
 # In Bash, $(pwd) gets the current directory and the paths are converted to a Unix-like format
 export LOCAL_HOME=$(pwd)
 export SHARED_HOME="/c/DEV_HOME"
+export DEV_HOME="/c/DEV_HOME"
 
 # Set Neovim's binary path
 export NVIM_BIN="/c/DEV_HOME/TOOLS/neovim/nvim-win64/bin"
@@ -22,11 +23,12 @@ export MAVEN_OPTS="-Xmx3g -XX:MaxPermSize=1g -Dmaven.multiModuleProjectDirectory
 export FD_HOME="/c/DEV_HOME/TOOLS/fd-pc-windows-gnu"
 export PYTHON_HOME="/c/DEV_HOME/TOOLS/python3.13.4"
 export RIPGREP_HOME="/c/DEV_HOME/TOOLS/ripgrep"
+export RIPGREP_ALL_HOME="/c/DEV_HOME/TOOLS/ripgrep_all"
 export GCC_HOME="/c/DEV_HOME/TOOLS/mingw64/bin"
 export PSQL_HOME="/c/Program Files/PostgreSQL/16/bin"
 
 # Update the PATH variable, using ':' as the separator for Bash
-export PATH="$LOCAL_HOME/scripts:$SHARED_HOME/scripts:$M2_HOME/bin:$PATH:$NVIM_BIN:$GCC_HOME:$RIPGREP_HOME:$PYTHON_HOME:$FD_HOME:$PSQL_HOME"
+export PATH="$LOCAL_HOME/scripts:$SHARED_HOME/scripts:$M2_HOME/bin:$PATH:$NVIM_BIN:$GCC_HOME:$RIPGREP_HOME:$RIPGREP_ALL_HOME:$PYTHON_HOME:$FD_HOME:$PSQL_HOME"
 
 # usefull commands:
 alias more="less -de"

@@ -5,7 +5,7 @@ vim.defer_fn(function()
     { '<leader>jd', group = '[J]ava [D]ebug' },
     { '<leader>jt', group = '[J]ava [T]est' },
     { '<leader>p', group = '[P]roject' },
-    { '<leader>pg', group = '[P]roject [G]k' },
+    { '<leader>pg', group = '[P]roject [G] Index Zero' },
     { '<leader>po', group = '[P]roject [O]racle' },
     { '<leader>pv', group = '[P]roject [V]ictor' },
     { '<leader>r', group = '[R]un' },
@@ -730,6 +730,35 @@ vim.keymap.set('n', '<Leader>rgpp', function()
   -- Construct and execute the command
   vim.cmd('silent !start cmd /k "' .. escaped_path .. '"')
 end, { desc = 'CMX - Run GK POS', noremap = true, silent = true })
+vim.keymap.set('n', '<Leader>rgpsa', function()
+  local config_path = vim.fn.stdpath 'config'
+  -- vim.notify('Config folder = ' .. config_path, vim.log.levels.WARN, { title = 'GK commands' })
+
+  -- Construct the full path using the environment variable and correct backslashes for Lua
+  local script_full_path = config_path .. '/custom/files/gk/CMX/fix_servers_war.bat'
+  -- vim.notify('Full path = ' .. script_full_path, vim.log.levels.WARN, { title = 'GK commands' })
+
+  local git_bash_path = script_full_path:gsub('\\', '/')
+  -- vim.notify('Git-bash path = ' .. git_bash_path, vim.log.levels.WARN, { title = 'GK commands' })
+
+  if vim.fn.filereadable(git_bash_path) ~= 1 then
+    vim.notify('File do not exist path = ' .. git_bash_path, vim.log.levels.ERROR, { title = 'GK commands' })
+  end
+
+  -- Construct the command to be executed by bash
+  local command_to_run = git_bash_path
+  vim.notify('Command to run = ' .. command_to_run, vim.log.levels.WARN, { title = 'GK commands' })
+
+  -- Ensure bash terminal configuration
+  vim.cmd 'setlocal shellcmdflag=-c'
+
+  -- vertical split
+  vim.cmd 'vsp'
+
+  -- Construct and execute the command
+  vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer
+  vim.cmd('terminal ' .. command_to_run)
+end, { desc = 'CMX - Fix servers wars', noremap = true, silent = true })
 
 -- Java specific keymaps
 
