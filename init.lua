@@ -842,6 +842,7 @@ require('lazy').setup({
         'java-debug-adapter', -- Java - Enable debug
         'gradle-language-server',
         'groovy-language-server',
+        'ts_ls', -- typescript and javascript
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
