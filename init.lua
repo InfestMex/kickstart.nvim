@@ -357,6 +357,27 @@ require('lazy').setup({
     },
   },
 
+  -- Gitlab plugin
+  {
+    'harrisoncramer/gitlab.nvim',
+    dependencies = {
+      'MunifTanjim/nui.nvim',
+      'nvim-lua/plenary.nvim',
+      'sindrets/diffview.nvim',
+      'stevearc/dressing.nvim', -- Recommended but not required. Better UI for pickers.
+      'nvim-tree/nvim-web-devicons', -- Recommended but not required. Icons in discussion tree.
+    },
+    build = function()
+      require('gitlab.server').build(true)
+    end, -- Builds the Go binary
+    config = function()
+      require('gitlab').setup {
+        log_path = 'c:/DEV_HOME/tmp/gitlab.nvim.log',
+        config_path = 'C:/Users/vaquilar/AppData/Local/nvim/custom/files/general',
+      }
+    end,
+  },
+
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
   --
   -- This is often very useful to both group configuration, as well as handle
