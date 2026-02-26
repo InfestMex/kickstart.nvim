@@ -396,7 +396,7 @@ vim.keymap.set('n', '<leader>rocad', function()
 
   vim.cmd 'enew' -- Create a new empty buffer
   vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer
-  vim.cmd 'term ./config/download/prepare-payload.sh && ./gradlew runDataLoader --console=plain' -- Run the command in a terminal
+  vim.cmd 'term ./config/download/prepare-payload.sh && ./gradlew xst_pos:dataLoader --console=plain' -- Run the command in a terminal
 end, {
   noremap = true,
   silent = true,
