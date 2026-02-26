@@ -176,6 +176,8 @@ if vim.fn.has 'win32' == 1 then
 
   vim.opt.shellquote = ''
   vim.opt.shellxquote = ''
+
+  vim.opt.termguicolors = true
 end
 
 local aiderCommand = 'ocaider'
@@ -353,6 +355,27 @@ require('lazy').setup({
       -- See also `vertical_bar_cursor_insert_mode` and `distance_stop_animating_vertical_bar`.
       smear_insert_mode = true,
     },
+  },
+
+  -- Gitlab plugin
+  {
+    'harrisoncramer/gitlab.nvim',
+    dependencies = {
+      'MunifTanjim/nui.nvim',
+      'nvim-lua/plenary.nvim',
+      'sindrets/diffview.nvim',
+      'stevearc/dressing.nvim', -- Recommended but not required. Better UI for pickers.
+      'nvim-tree/nvim-web-devicons', -- Recommended but not required. Icons in discussion tree.
+    },
+    build = function()
+      require('gitlab.server').build(true)
+    end, -- Builds the Go binary
+    config = function()
+      require('gitlab').setup {
+        log_path = 'c:/DEV_HOME/tmp/gitlab.nvim.log',
+        config_path = 'C:/Users/vaquilar/AppData/Local/nvim/custom/files/general',
+      }
+    end,
   },
 
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
