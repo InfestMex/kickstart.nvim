@@ -92,6 +92,16 @@ vim.keymap.set(
   { silent = true, desc = '[R]un [G]K [E]XP [P]os' }
 )
 
+vim.keymap.set(
+  'n', -- Normal mode
+  '<leader>rgpp', -- The key sequence (e.g., \sh with default leader)
+  function()
+    local run_pos_file = vim.fn.stdpath 'config' .. '/custom/files/gk/CMX/POS_sandbox__0037.sh'
+    run_sh_file_to_log_buffer(run_pos_file)
+  end,
+  { silent = true, desc = '[R]un [G]K [P]PG [P]os' }
+)
+
 -- Create the new keymap for stopping the running job.
 -- We'll map <leader>sk to the stop function.
 vim.keymap.set(
@@ -110,4 +120,13 @@ vim.keymap.set(
     stop_running_job()
   end,
   { silent = true, desc = '[R]un [G]K [E]XP [K]ill POS' }
+)
+
+vim.keymap.set(
+  'n', -- Normal mode
+  '<leader>rgpk', -- The key sequence (e.g., \sh with default leader)
+  function()
+    stop_running_job()
+  end,
+  { silent = true, desc = '[R]un [G]K [P]PG [K]ill POS' }
 )
