@@ -372,8 +372,8 @@ require('lazy').setup({
     end, -- Builds the Go binary
     config = function()
       require('gitlab').setup {
-        log_path = 'c:/DEV_HOME/tmp/gitlab.nvim.log',
-        config_path = 'C:/Users/vaquilar/AppData/Local/nvim/custom/files/general',
+        -- log_path = vim.fn.stdpath("cache") .. "/gitlab.nvim.log",
+        -- config_path = nil,
       }
     end,
   },
