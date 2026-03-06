@@ -602,6 +602,21 @@ end, {
 
 vim.keymap.set('n', '<leader>yf', ':let @+=expand("%:t")<CR>', { noremap = true, silent = true, desc = 'Copy current file name' })
 
+-- Yank current buffer's relative path
+vim.keymap.set('n', '<leader>yp', function()
+  local rel = vim.fn.expand '%' -- relative to :pwd
+  if rel == '' then
+    vim.notify('No file name (buffer not associated with a file)', vim.log.levels.WARN)
+    return
+  end
+  vim.fn.setreg('"', rel)
+  vim.fn.setreg('+', rel) -- system clipboard (requires clipboard support)
+  vim.notify('Yanked: ' .. rel)
+end, { desc = 'Yank relative file path' })
+
+-- Remove trailing whitespace in the whole buffer
+vim.keymap.set('n', '<leader>yw', [[:%s/\s\+$//<CR>]], { silent = true, desc = 'Trim trailing whitespace' })
+
 vim.keymap.set('n', '<leader>rcr', function()
   local config_path = vim.fn.stdpath 'config'
   -- vim.notify('Config folder = ' .. config_path, vim.log.levels.WARN, { title = 'GK commands' })
