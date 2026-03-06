@@ -44,7 +44,6 @@ vim.cmd [[
   endfunction
 
   " Dadbod hook to format/modify the query string before it is piped
-  " THE FIX: Automatically append ';' and 'exit;'
   function! DerbyAdaptermassage(input, ...)
     let l:query = type(a:input) == type([]) ? join(a:input, "\n") : a:input
     

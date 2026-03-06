@@ -720,17 +720,34 @@ end, {
 })
 
 vim.keymap.set('n', '<Leader>rgpm', function()
-  -- Get the SHARED_HOME environment variable
-  local shared_home = os.getenv 'SHARED_HOME'
+  -- TODO: move this in to a lua logic
 
-  -- Construct the full path using the environment variable and correct backslashes for Lua
-  local script_full_path = shared_home .. '\\CMX\\start.bat'
+  -- Ensure bash terminal configuration
+  vim.cmd 'setlocal shellcmdflag=-c'
 
-  -- Escape the path for the shell using vim.fn.fnameescape()
-  local escaped_path = vim.fn.fnameescape(script_full_path)
+  -- vertical split
+  vim.cmd 'vsp'
 
-  -- Construct and execute the command
-  vim.cmd(':terminal "' .. escaped_path .. '"')
+  -- call the terminal with Vars
+  vim.cmd 'terminal'
+  -- The command you want to run after .bashrc loads
+  local command_to_run = 'source ~/AppData/Local/nvim/custom/files/gk/CMX/set-project-env-variables.sh'
+
+  vim.notify('Running command = ' .. command_to_run, vim.log.levels.INFO, { title = 'GK commands' })
+
+  -- The carriage return/Enter key
+  local enter = vim.api.nvim_replace_termcodes('<CR>', true, true, true)
+
+  -- The full sequence of keys to "type":
+  -- 'a' (enter Terminal-mode)
+  -- <command_to_run> (your script command)
+  -- <enter> (run the command)
+  local keys = 'a' .. command_to_run .. enter
+
+  -- Send the keys. The 't' mode means "typed" keys.
+  -- A small delay is implicitly added by the event loop,
+  -- which usually makes this reliable.
+  vim.fn.feedkeys(keys, 't')
 end, { desc = 'CMX - Start MVN Shell', noremap = true, silent = true })
 vim.keymap.set('n', '<Leader>rgpsa', function()
   local config_path = vim.fn.stdpath 'config'
