@@ -1104,6 +1104,21 @@ require('lazy').setup({
       -- Load the colorscheme here.
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
+
+      require('gruvbox').setup {
+        -- contrast = 'hard', -- can be "hard", "soft" or empty string
+        overrides = {
+          LspReferenceText = { bg = '#d65d0e', fg = '#282828' },
+          LspReferenceRead = { bg = '#d65d0e', fg = '#282828' },
+          LspReferenceWrite = { bg = '#d65d0e', fg = '#282828', bold = true }, -- Bold for writes
+
+          TelescopeSelection = { bg = '#d65d0e', fg = '#282828', bold = true },
+          TelescopeSelectionCaret = { bg = '#d65d0e', fg = '#282828' }, -- The '>' icon
+
+          PmenuSel = { bg = '#d65d0e', fg = '#282828', bold = true },
+        },
+      }
+
       -- vim.cmd.colorscheme 'retrobox'
       vim.cmd.colorscheme 'gruvbox'
     end,
