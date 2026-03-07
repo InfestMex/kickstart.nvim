@@ -373,6 +373,7 @@ require('lazy').setup({
     config = function()
       require('gitlab').setup {
         -- log_path = vim.fn.stdpath("cache") .. "/gitlab.nvim.log",
+        log_path = '~/gitlab.nvim.log',
         -- config_path = nil,
       }
     end,
@@ -893,28 +894,14 @@ require('lazy').setup({
 
       --lemminx needs to be setup latter
       vim.lsp.enable('lemminx', false)
-      require('lspconfig').lemminx.setup {
-        filetypes = {
-          'xml',
-          'xsd',
-          'xsl',
-          'xslt',
-          'svg',
-          'dtx',
-        },
+      vim.lsp.config('lemminx', {
+        -- Note: Neovim 0.11+ handles filetypes via 'vim.lsp.enable',
+        -- but you can still override/extend them here if needed.
+        filetypes = { 'xml', 'xsd', 'xsl', 'xslt', 'svg', 'dtx' },
         settings = {
           xml = {
             fileAssociations = {
-              -- Treat .dtx files as XML
-              {
-                pattern = '*.dtx',
-                -- Optionally, specify a systemId or publicId if your .dtx files adhere
-                -- to a specific DTD or XML Schema. Otherwise, you can omit it.
-                -- systemId = "http://example.com/your-dtx-schema.xsd",
-                -- publicId = "-//YOUR_COMPANY//DTD Your DTX Format//EN",
-              },
-              -- Example for other custom XML files (uncomment if needed)
-              -- { pattern = "*.config", systemId = "http://schemas.microsoft.com/.NetConfiguration/v2.0" },
+              { pattern = '*.dtx' },
             },
             format = {
               enabled = true,
@@ -926,7 +913,8 @@ require('lazy').setup({
             },
           },
         },
-      }
+      })
+      vim.lsp.enable 'lemminx'
     end,
   },
 
