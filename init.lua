@@ -287,7 +287,8 @@ require('lazy').setup({
     },
     config = function(_, opts)
       require('transparent').setup(opts)
-      vim.cmd 'TransparentEnable'
+      -- vim.cmd 'TransparentEnable'
+      vim.cmd 'TransparentDisable' --This needs to be disable because gruvbox theme
     end,
   },
 
@@ -1106,6 +1107,7 @@ require('lazy').setup({
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
 
       require('gruvbox').setup {
+        transparent_mode = true,
         -- contrast = 'hard', -- can be "hard", "soft" or empty string
         overrides = {
           LspReferenceText = { bg = '#d65d0e', fg = '#282828' },
