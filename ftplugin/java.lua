@@ -61,8 +61,11 @@ local config = {
         --   profile = "GoogleStyle",
         -- },
         settings = {
-          url = '~/.config/nvim/custom/files/xstore_formatter.xml',
-          profile = 'xstore',
+          -- url = '~/.config/nvim/custom/files/xstore_formatter.xml',
+          -- profile = 'xstore',
+          profile = 'GoogleStyle',
+          -- url = 'https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml',
+          url = '~/.config/nvim/custom/files/eclipse-java-google-style.xml',
         },
       },
       memberSortOrder = { 'SF', 'SI', 'SM', 'F', 'I', 'C', 'M', 'T' },

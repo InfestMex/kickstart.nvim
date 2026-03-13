@@ -865,6 +865,7 @@ require('lazy').setup({
         -- 'prettier', -- Generic formatter
         'lemminx', -- XML - Used to format XML files
         'jdtls', -- Java - Used to handle java files
+        'google-java-format', -- Java formatter
         'java-test', -- Java - Run Junit
         'java-debug-adapter', -- Java - Enable debug
         'gradle-language-server',
@@ -898,7 +899,7 @@ require('lazy').setup({
       vim.lsp.config('lemminx', {
         -- Note: Neovim 0.11+ handles filetypes via 'vim.lsp.enable',
         -- but you can still override/extend them here if needed.
-        filetypes = { 'xml', 'xsd', 'xsl', 'xslt', 'svg', 'dtx' },
+        filetypes = { 'xml', 'xsd', 'xsl', 'xslt', 'svg', 'dtx', 'ant' },
         settings = {
           xml = {
             fileAssociations = {
@@ -985,7 +986,7 @@ require('lazy').setup({
         dtx = { 'lemminx' },
         json = { 'prettier', 'jq' },
         -- You can also use 'stop_after_first' to run the first available formatter from the list
-        java = { 'jdtls', stop_after_first = true },
+        java = { 'google-java-format', 'jdtls', stop_after_first = true },
       },
     },
   },
