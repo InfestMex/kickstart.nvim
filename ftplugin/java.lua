@@ -10,6 +10,27 @@ end
 
 -- TODO: if projact_name=xstore, move two folders avobe to get the correct version
 
+-- Collect java debug/test bundles (assumes Mason installs)
+local bundles = {}
+
+do
+  local mason = vim.fn.stdpath 'data' .. '/mason/packages'
+
+  -- java-debug-adapter (nvim-dap support)
+  local java_debug_jar = vim.fn.glob(mason .. '/java-debug-adapter/extension/server/com.microsoft.java.debug.plugin-*.jar', 1)
+  if java_debug_jar ~= nil and java_debug_jar ~= '' then
+    table.insert(bundles, java_debug_jar)
+  end
+
+  -- java-test (optional, adds test runner integration to jdtls)
+  local java_test_jars = vim.fn.glob(mason .. '/java-test/extension/server/*.jar', 1)
+  if java_test_jars ~= nil and java_test_jars ~= '' then
+    for _, jar in ipairs(vim.split(java_test_jars, '\n', { trimempty = true })) do
+      table.insert(bundles, jar)
+    end
+  end
+end
+
 local config = {
   name = 'jdtls',
 
@@ -83,10 +104,18 @@ local config = {
   --
   -- If you don't plan on any eclipse.jdt.ls plugins you can remove this
   init_options = {
-    bundles = {},
+    bundles = bundles,
   },
 }
 
 -- require('lspconfig').jdtls.setup(config)
 
 require('jdtls').start_or_attach(config)
+
+-- Wire jdtls into nvim-dap (requires nvim-dap installed/configured)
+pcall(function()
+  require('jdtls').setup_dap {
+    hotcodereplace = 'auto',
+    dap_main = false,
+  }
+end)

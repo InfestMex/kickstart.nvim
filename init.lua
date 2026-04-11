@@ -1206,7 +1206,12 @@ require('lazy').setup({
       end
 
       require('oil').setup {
-        columns = { 'icon' },
+        columns = {
+          -- "permissions", -- Optional: uncomment to add permissions
+          -- 'size', -- Optional: uncomment to add size
+          { 'mtime', format = '%Y-%m-%d %H:%M' }, -- Add the mtime column with a specific format
+          'icon',
+        },
         keymaps = {
           ['<C-h>'] = false,
           ['<C-l>'] = false,

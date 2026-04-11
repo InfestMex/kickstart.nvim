@@ -100,25 +100,26 @@ return {
 
     -- Dap UI setup
     -- For more information, see |:help nvim-dap-ui|
-    dapui.setup {
-      -- Set icons to characters that are more likely to work in every terminal.
-      --    Feel free to remove or use ones that you like more! :)
-      --    Don't feel like these are good choices.
-      icons = { expanded = '▾', collapsed = '▸', current_frame = '*' },
-      controls = {
-        icons = {
-          pause = '⏸',
-          play = '▶',
-          step_into = '⏎',
-          step_over = '⏭',
-          step_out = '⏮',
-          step_back = 'b',
-          run_last = '▶▶',
-          terminate = '⏹',
-          disconnect = '⏏',
-        },
-      },
-    }
+    dapui.setup()
+    -- dapui.setup {
+    --   -- Set icons to characters that are more likely to work in every terminal.
+    --   --    Feel free to remove or use ones that you like more! :)
+    --   --    Don't feel like these are good choices.
+    --   icons = { expanded = '▾', collapsed = '▸', current_frame = '*' },
+    --   controls = {
+    --     icons = {
+    --       pause = '⏸',
+    --       play = '▶',
+    --       step_into = '⏎',
+    --       step_over = '⏭',
+    --       step_out = '⏮',
+    --       step_back = 'b',
+    --       run_last = '▶▶',
+    --       terminate = '⏹',
+    --       disconnect = '⏏',
+    --     },
+    --   },
+    -- }
 
     -- Change breakpoint icons
     -- vim.api.nvim_set_hl(0, 'DapBreak', { fg = '#e51400' })
@@ -143,6 +144,19 @@ return {
         -- See https://github.com/leoluz/nvim-dap-go/blob/main/README.md#configuring
         detached = vim.fn.has 'win32' == 0,
       },
+    }
+
+    -- Define the Java debug configurations
+    dap.configurations.java = {
+      -- This configuration is for "attach" mode
+      {
+        type = 'java',
+        request = 'attach',
+        name = 'Debug (Attach) - Remote 5005',
+        hostName = '127.0.0.1', -- The host where the Java process is running
+        port = 5005, -- The port the Java process is listening on
+      },
+      -- You can add other configurations here (e.g., launch a main class)
     }
   end,
 }
