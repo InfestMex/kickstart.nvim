@@ -89,6 +89,11 @@ local config = {
           url = '~/.config/nvim/custom/files/eclipse-java-google-style.xml',
         },
       },
+      inlayHints = {
+        parameterNames = {
+          enabled = 'all', -- "none" | "literals" | "all"
+        },
+      },
       memberSortOrder = { 'SF', 'SI', 'SM', 'F', 'I', 'C', 'M', 'T' },
       symbols = {
         includeSourceMethodDeclarations = true,
