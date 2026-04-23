@@ -24,7 +24,7 @@ local function container_picker()
           name = name,
           image = image or 'N/A',
           status = status or 'N/A',
-          display = string.format('%s (%s) - %s - %s', id:sub(1, 12), name, image, status),
+          display = string.format('%s - %s - %s - %s', name, id:sub(1, 12), image, status),
         })
       end
     end
@@ -168,5 +168,78 @@ local function volume_picker()
     :find()
 end
 
+local function container_exec_picker()
+  local pickers = require 'telescope.pickers'
+  local finders = require 'telescope.finders'
+  local conf = require('telescope.config').values
+  local actions = require 'telescope.actions'
+  local action_state = require 'telescope.actions.state'
+
+  local output = vim.fn.system 'podman ps --format "table {{.ID}}\t{{.Names}}\t{{.Image}}\t{{.Status}}" --filter status=running'
+  if vim.v.shell_error ~= 0 then
+    vim.notify('Error running podman ps', vim.log.levels.ERROR)
+    return
+  end
+
+  local lines = vim.split(output, '\n')
+  local containers = {}
+  local header = lines[1]
+  for i = 2, #lines do
+    local line = lines[i]:gsub('^%s+', ''):gsub('%s+$', '')
+    if line ~= '' then
+      local id, name, image, status = line:match '^(%S+)%s+(%S+)%s+(.+)%s+(.+)$'
+      if id and name then
+        table.insert(containers, {
+          id = id,
+          name = name,
+          image = image or 'N/A',
+          status = status or 'N/A',
+          display = string.format('%s - %s - %s - %s', name, id:sub(1, 12), image, status),
+        })
+      end
+    end
+  end
+
+  if #containers == 0 then
+    vim.notify('No running containers found', vim.log.levels.WARN)
+    return
+  end
+
+  pickers
+    .new({}, {
+      prompt_title = 'Select running Podman container to exec bash',
+      finder = finders.new_table {
+        results = containers,
+        entry_maker = function(entry)
+          return {
+            value = entry,
+            display = entry.display,
+            ordinal = entry.name .. ' ' .. entry.id,
+            filename = entry.id,
+          }
+        end,
+      },
+      sorter = conf.generic_sorter {},
+      attach_mappings = function(prompt_bufnr, map)
+        actions.select_default:replace(function()
+          actions.close(prompt_bufnr)
+          local selection = action_state.get_selected_entry()
+          if not selection then
+            return
+          end
+
+          local container_name = selection.value.name
+          vim.cmd 'sp'
+          vim.cmd 'enew'
+          vim.cmd 'setlocal shellcmdflag=-c'
+          vim.cmd('terminal podman exec -it ' .. vim.fn.shellescape(container_name) .. ' bash')
+        end)
+        return true
+      end,
+    })
+    :find()
+end
+
 vim.keymap.set('n', '<leader>cn', container_picker, { desc = '[C]ontainer running + [N]eovim' })
 vim.keymap.set('n', '<leader>cv', volume_picker, { desc = '[C]ontainer + [V]olumes (inspect in vsplit)' })
+vim.keymap.set('n', '<leader>cb', container_exec_picker, { desc = '[R]un [C]ontainers exec [B]ash' })
