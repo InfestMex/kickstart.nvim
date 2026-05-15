@@ -862,7 +862,7 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
-        -- 'prettier', -- Generic formatter
+        'prettier', -- TypeScript formatter
         'lemminx', -- XML - Used to format XML files
         'jdtls', -- Java - Used to handle java files
         'google-java-format', -- Java formatter
@@ -966,7 +966,14 @@ require('lazy').setup({
         -- have a well standardized coding style. You can add additional
         -- languages here or re-enable it for the disabled ones.
         local disable_filetypes = { c = true, cpp = true, json = true, xml = true, xsd = true, dtx = true }
-        if disable_filetypes[vim.bo[bufnr].filetype] then
+        local filetype = vim.bo[bufnr].filetype
+        if filetype == 'typescript' or filetype == 'typescriptreact' then
+          return {
+            timeout_ms = 500,
+            lsp_format = 'never',
+          }
+        end
+        if disable_filetypes[filetype] then
           return nil
         else
           return {
@@ -985,8 +992,39 @@ require('lazy').setup({
         xml = { 'lemminx' },
         dtx = { 'lemminx' },
         json = { 'prettier', 'jq' },
+        javascript = { 'project_prettier' },
+        typescript = { 'project_prettier' },
+        typescriptreact = { 'project_prettier' },
         -- You can also use 'stop_after_first' to run the first available formatter from the list
         java = { 'google-java-format', 'jdtls', stop_after_first = true },
+      },
+      formatters = {
+        project_prettier = {
+          command = 'prettier',
+          args = function(_, ctx)
+            local config
+            for _, dirname in ipairs { '.vscode' } do
+              local dirs = vim.fs.find(dirname, { path = ctx.dirname, upward = true, type = 'directory' })
+              for _, dir in ipairs(dirs) do
+                local candidate = vim.fs.joinpath(dir, '.prettierrc')
+                if vim.fn.filereadable(candidate) == 1 then
+                  config = candidate
+                  break
+                end
+              end
+              if config then
+                break
+              end
+            end
+
+            local args = { '--stdin-filepath', '$FILENAME' }
+            if config then
+              vim.list_extend(args, { '--config', config })
+            end
+            return args
+          end,
+          stdin = true,
+        },
       },
     },
   },
