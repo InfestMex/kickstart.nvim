@@ -509,6 +509,40 @@ end, {
   desc = '[R]un [O]racle [D]ataBase [U]pgrade-script [O]racle',
 })
 
+vim.keymap.set('n', '<leader>rocae', function()
+  local config_path = vim.fn.stdpath 'config'
+  -- vim.notify('Config folder = ' .. config_path, vim.log.levels.WARN, { title = 'Oracle commands' })
+
+  -- Construct the full path using the environment variable and correct backslashes for Lua
+  local script_full_path = config_path .. '/custom/files/oracle/current_run_electron.sh'
+  -- vim.notify('Full path = ' .. script_full_path, vim.log.levels.WARN, { title = 'Oracle commands' })
+
+  local git_bash_path = vim.fn.fnameescape(script_full_path)
+  -- vim.notify('Git-bash path = ' .. git_bash_path, vim.log.levels.WARN, { title = 'Oracle commands' })
+
+  if vim.fn.filereadable(git_bash_path) ~= 1 then
+    vim.notify('File do not exist path = ' .. git_bash_path, vim.log.levels.ERROR, { title = 'Oracle commands' })
+  end
+
+  -- Construct the command to be executed by bash
+  local command_to_run = git_bash_path
+  vim.notify('Command to run = ' .. command_to_run, vim.log.levels.INFO, { title = 'Oracle commands' })
+
+  -- Ensure bash terminal configuration
+  vim.cmd 'setlocal shellcmdflag=-c'
+
+  -- split
+  vim.cmd 'sp'
+
+  -- Construct and execute the command
+  -- vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer
+  vim.cmd('terminal ' .. command_to_run)
+end, {
+  noremap = true,
+  silent = true,
+  desc = '[R]un [O]racle [C]urrent [A]pp [E]electron',
+})
+
 vim.keymap.set('n', '<leader>rodco', function()
   local config_path = vim.fn.stdpath 'config'
   -- vim.notify('Config folder = ' .. config_path, vim.log.levels.WARN, { title = 'Oracle commands' })
@@ -613,6 +647,26 @@ vim.keymap.set('n', '<leader>yp', function()
   vim.fn.setreg('+', rel) -- system clipboard (requires clipboard support)
   vim.notify('Yanked: ' .. rel)
 end, { desc = 'Yank relative file path' })
+
+-- Yank current java class including package
+vim.keymap.set('n', '<leader>yjf', function()
+  local pkg = nil
+
+  for _, line in ipairs(vim.api.nvim_buf_get_lines(0, 0, -1, false)) do
+    pkg = line:match '^%s*package%s+([%w_.]+)%s*;'
+    if pkg then
+      break
+    end
+  end
+
+  local class_name = vim.fn.expand '%:t:r'
+  local fqn = pkg and (pkg .. '.' .. class_name) or class_name
+
+  vim.fn.setreg('+', fqn)
+  vim.fn.setreg('"', fqn)
+
+  vim.notify('Copied: ' .. fqn)
+end, { desc = 'Yank Java fully qualified class name' })
 
 -- Remove trailing whitespace in the whole buffer
 vim.keymap.set('n', '<leader>yw', [[:%s/\s\+$//<CR>]], { silent = true, desc = 'Trim trailing whitespace' })
