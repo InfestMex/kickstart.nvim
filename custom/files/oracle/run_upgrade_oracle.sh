@@ -8,7 +8,7 @@ cp -r $work_dir/db-upgrade.sql $dest_dir/db-upgrade_edited.sql
 echo "Copy file from [$work_dir/db-upgrade.sql] in to [$dest_dir/db-upgrade_edited.sql]"
   
 # Replace placeholders in the SQL file
-perl -pi -e "s/\\\$\\(DbTblspace\\)/$schema_name/g" "$dest_dir/db-upgrade_edited.sql"
+perl -pi -e "s/\\\$\\(DbTblspace\\)/${schema_name}_DATA/g" "$dest_dir/db-upgrade_edited.sql"
   
 perl -pi -e 's/\$\(DbSchema\)/dtv/g' $dest_dir/db-upgrade_edited.sql
 

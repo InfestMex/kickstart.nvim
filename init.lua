@@ -144,8 +144,15 @@ vim.opt.splitbelow = true
 -- Sets how neovim will display certain whitespace characters in the editor.
 --  See `:help 'list'`
 --  and `:help 'listchars'`
-vim.opt.list = true
-vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
+vim.opt.list = false
+vim.opt.listchars = {
+  nbsp = '␣',
+  tab = '» ',
+  trail = '·',
+  space = '·',
+  lead = '·',
+  eol = '↲',
+}
 
 -- Preview substitutions live, as you type!
 vim.opt.inccommand = 'split'
@@ -1206,7 +1213,12 @@ require('lazy').setup({
       end
 
       require('oil').setup {
-        columns = { 'icon' },
+        columns = {
+          -- "permissions", -- Optional: uncomment to add permissions
+          -- 'size', -- Optional: uncomment to add size
+          { 'mtime', format = '%Y-%m-%d %H:%M' }, -- Add the mtime column with a specific format
+          'icon',
+        },
         keymaps = {
           ['<C-h>'] = false,
           ['<C-l>'] = false,
