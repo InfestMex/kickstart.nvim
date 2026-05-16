@@ -13,11 +13,11 @@ set JAVA_HOME=%SHARED_HOME%/TOOLS/java/21.0.6
 echo Starting server WAR deployments...
 echo.
 
-call :deploy_war "cis-war"      "ses\build\cis\cis-war"      "tmp0"
-call :deploy_war "sdc-war"      "ses\build\sdc\sdc-war"      "tmp1"
-call :deploy_war "pos-server-war" "pos-server\build\pos-server\pos-server-war" "tmp5"
-call :deploy_war "cps-war"      "cps\build\cps\cps-war"      "tmp3"
-call :deploy_war "ucon-war"      "ses\build\ucon\ucon-war"      "tmp6"
+REM call :deploy_war "cis-war"      "ses\build\cis\cis-war"      "tmp0"
+REM call :deploy_war "sdc-war"      "ses\build\sdc\sdc-war"      "tmp1"
+REM call :deploy_war "pos-server-war" "pos-server\build\pos-server\pos-server-war" "tmp5"
+REM call :deploy_war "cps-war"      "cps\build\cps\cps-war"      "tmp3"
+REM call :deploy_war "ucon-war"      "ses\build\ucon\ucon-war"      "tmp6"
 call :deploy_war "launchpad-war" "launchpad\build\launchpad\launchpad-war" "tmp7"
 call :deploy_war "launchpad-apps-war" "launchpad-apps\build\launchpad-apps\launchpad-apps-war" "tmp8"
 
