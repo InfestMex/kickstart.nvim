@@ -11,6 +11,7 @@ source $SCRIPT_DIR/../set-env-variables.sh
 export JAVA_HOME="$SHARED_HOME/TOOLS/java/1.8.0_111"
 mvn clean install -Dfast -f C:/DEV_HOME/CMX/ws-pos/git/pos/client/mod-functions-client-cst/pom.xml
 mvn clean install -Dfast -f C:/DEV_HOME/CMX/ws-pos/git/pos/build/pos-full/pos-full-deployment/pom.xml
+cp C:/DEV_HOME/CMX/ws-pos/git/pos/build/pos-full/pos-full-deployment/target/assembly-prep/lib_cst/* C:/DEV_HOME/CMX/ws-pos/git/pos/build/pos-full/pos-full-sandbox/_sandbox__0037/lib_cst/
 
 # Change to the directory where this script is located
 cd "$(dirname "$0")"

@@ -34,9 +34,12 @@ export GCC_HOME="/c/DEV_HOME/TOOLS/mingw64/bin"
 export PSQL_HOME="/c/Program Files/PostgreSQL/16/bin"
 export GO_HOME="/c/DEV_HOME/TOOLS/go/bin"
 export DERBY_HOME="/c/DEV_HOME/TOOLS/db-derby-10.17.1.0-bin/bin"
+#
+# Set NPM binary path
+export NPM="/c/Users/vaquilar/AppData/Roaming/npm"
 
 # Update the PATH variable, using ':' as the separator for Bash
-export PATH="$LOCAL_HOME/scripts:$SHARED_HOME/scripts:$M2_HOME/bin:$PATH:$NVIM_BIN:$GCC_HOME:$RIPGREP_HOME:$RIPGREP_ALL_HOME:$PYTHON_HOME:$FD_HOME:$PSQL_HOME:$GO_HOME:$DERBY_HOME"
+export PATH="$LOCAL_HOME/scripts:$SHARED_HOME/scripts:$M2_HOME/bin:$PATH:$NVIM_BIN:$GCC_HOME:$RIPGREP_HOME:$RIPGREP_ALL_HOME:$PYTHON_HOME:$FD_HOME:$PSQL_HOME:$GO_HOME:$DERBY_HOME:$NPM"
 
 # usefull commands:
 alias more="less -de"
