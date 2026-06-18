@@ -4,8 +4,9 @@
 export LOCAL_HOME=$(pwd)
 export SHARED_HOME="C:/DEV_HOME"
 
-# Set JAVA_HOME for Java 21
+# Set JAVA_HOME for Java
 export JAVA_HOME="$SHARED_HOME/TOOLS/java/1.8.0_111"
+# export JAVA_HOME="$SHARED_HOME/TOOLS/java/1.11.0_14"
 
 # Display a confirmation message with the new PATH
 echo "Project specific environment variables have been updated."
