@@ -8,6 +8,9 @@ vim.defer_fn(function()
     { '<leader>pg', group = '[P]roject [G] Index Zero' },
     { '<leader>po', group = '[P]roject [O]racle' },
     { '<leader>pv', group = '[P]roject [V]ictor' },
+    { '<leader>pvd', group = '[P]roject [V]ictor [D]atabase' },
+    { '<leader>pvr', group = '[P]roject [V]ictor [R]emote' },
+    { '<leader>pvro', group = '[P]roject [V]ictor [R]emote [O]racle' },
     { '<leader>r', group = '[R]un' },
     { '<leader>rc', group = '[R]un [C]onteiners' },
     { '<leader>rg', group = '[R]un [G] Index' },
@@ -51,6 +54,17 @@ vim.keymap.set('n', '<leader>pvl', ':cd ~/.config/nvim<CR>', {
   silent = true,
   desc = '[P]roject [V]ictor [L]inux Neovim',
 })
+vim.keymap.set(
+  'n',
+  '<leader>pvroo',
+  ':terminal ssh -i ~/AppData/Local/nvim/custom/files/other/personal-oracle-cloud/ssh-key-2026-06-14.key opc@40.233.3.28<CR>',
+  {
+    -- ssh -i ~/AppData/Local/nvim/custom/files/other/personal-oracle-cloud/ssh-key-2026-06-14.key opc@40.233.3.28
+    noremap = true,
+    silent = true,
+    desc = '[P]roject [V]ictor [R]emote [O]racle [O]ne instance',
+  }
+)
 vim.keymap.set('n', '<leader>poc', ':cd /home/viaguila/dev/current/git/xstore<CR>', {
   noremap = true,
   silent = true,
