@@ -2000,8 +2000,9 @@ require('lazy').setup({
     'nvim-treesitter/nvim-treesitter-context',
     dependencies = { 'nvim-treesitter/nvim-treesitter' },
     opts = {
-      max_lines = 10, -- Limits the sticky header block to 3 lines maximum
+      max_lines = 10, -- Limits the sticky header block to 10 lines maximum
       mode = 'cursor', -- Tracks context based on where your cursor is sitting
+      separator = '-', -- Draws a divider where the sticky context block ends
     },
   },
 
