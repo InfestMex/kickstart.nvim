@@ -187,11 +187,6 @@ if vim.fn.has 'win32' == 1 then
   vim.opt.termguicolors = true
 end
 
-local aiderCommand = 'ocaider'
-if vim.fn.has 'win32' == 1 then
-  aiderCommand = 'aider'
-end
-
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
@@ -1304,56 +1299,38 @@ require('lazy').setup({
     },
   },
 
+  { 'pablopunk/pi.nvim' },
+
   {
-    'GeorgesAlkhouri/nvim-aider',
-    cmd = 'Aider',
-    -- options
-    opts = {
-      -- Command that executes Aider
-      aider_cmd = aiderCommand,
-      -- Command line arguments passed to aider
-      args = {
-        '--no-auto-commits',
-        '--pretty',
-        -- "--stream",
-      },
-    },
-    -- Example key mappings for common actions:
+    'kkrampis/codex.nvim',
+    lazy = true,
+    cmd = { 'Codex', 'CodexToggle' }, -- Optional: Load only on command execution
     keys = {
-      { '<leader>a/', '<cmd>Aider toggle<cr>', desc = 'Toggle Aider' },
-      { '<leader>as', '<cmd>Aider send<cr>', desc = 'Send to Aider', mode = { 'n', 'v' } },
-      { '<leader>ac', '<cmd>Aider command<cr>', desc = 'Aider Commands' },
-      { '<leader>ab', '<cmd>Aider buffer<cr>', desc = 'Send Buffer' },
-      { '<leader>a+', '<cmd>Aider add<cr>', desc = 'Add File' },
-      { '<leader>a-', '<cmd>Aider drop<cr>', desc = 'Drop File' },
-      { '<leader>ar', '<cmd>Aider add readonly<cr>', desc = 'Add Read-Only' },
-      { '<leader>aR', '<cmd>Aider reset<cr>', desc = 'Reset Session' },
-      -- Example nvim-tree.lua integration if needed
-      { '<leader>a+', '<cmd>AiderTreeAddFile<cr>', desc = 'Add File from Tree to Aider', ft = 'NvimTree' },
-      { '<leader>a-', '<cmd>AiderTreeDropFile<cr>', desc = 'Drop File from Tree from Aider', ft = 'NvimTree' },
-    },
-    dependencies = {
-      { 'folke/snacks.nvim', version = '>=2.24.0' },
-      --- The below dependencies are optional
-      'catppuccin/nvim',
-      'nvim-tree/nvim-tree.lua',
-      --- Neo-tree integration
       {
-        'nvim-neo-tree/neo-tree.nvim',
-        opts = function(_, opts)
-          -- Example mapping configuration (already set by default)
-          -- opts.window = {
-          --   mappings = {
-          --     ["+"] = { "nvim_aider_add", desc = "add to aider" },
-          --     ["-"] = { "nvim_aider_drop", desc = "drop from aider" }
-          --     ["="] = { "nvim_aider_add_read_only", desc = "add read-only to aider" }
-          --   }
-          -- }
-          require('nvim_aider.neo_tree').setup(opts)
+        '<leader>ac', -- Change this to your preferred keybinding
+        function()
+          require('codex').toggle()
         end,
+        desc = 'Toggle Codex popup or side-panel',
+        mode = { 'n', 't' },
       },
     },
-    config = true,
+    opts = {
+      keymaps = {
+        toggle = nil, -- Keybind to toggle Codex window (Disabled by default, watch out for conflicts)
+        quit = '<C-q>', -- Keybind to close the Codex window (default: Ctrl + q)
+      }, -- Disable internal default keymap (<leader>cc -> :CodexToggle)
+      border = 'rounded', -- Options: 'single', 'double', or 'rounded'
+      width = 0.8, -- Width of the floating window (0.0 to 1.0)
+      height = 0.8, -- Height of the floating window (0.0 to 1.0)
+      model = nil, -- Optional: pass a string to use a specific model (e.g., 'o3-mini')
+      autoinstall = true, -- Automatically install the Codex CLI if not found
+      panel = false, -- Open Codex in a side-panel (vertical split) instead of floating window
+      status_indicator = {
+        enabled = false, -- Avoid E565 from the plugin's startup-time floating status buffer update
+      },
+      use_buffer = false, -- Capture Codex stdout into a normal buffer instead of a terminal buffer
+    },
   },
 
   {
