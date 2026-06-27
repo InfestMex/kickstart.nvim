@@ -178,16 +178,16 @@ vim.opt.shiftwidth = 2
 vim.opt.diffopt:append 'iwhiteall'
 
 -- Always use bash style, do not use windows terminal config because bash terminal is expected
-if vim.fn.has 'win32' == 1 then
-  vim.opt.shellcmdflag = '-c'
-
-  vim.opt.shellquote = ''
-  vim.opt.shellxquote = ''
-
-  -- vim.opt.shellslash = true
-
-  vim.opt.termguicolors = true
-end
+-- if vim.fn.has 'win32' == 1 then
+--   vim.opt.shellcmdflag = '-c'
+--
+--   vim.opt.shellquote = ''
+--   vim.opt.shellxquote = ''
+--
+--   -- vim.opt.shellslash = true
+--
+--   vim.opt.termguicolors = true
+-- end
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
