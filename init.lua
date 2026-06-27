@@ -184,6 +184,8 @@ if vim.fn.has 'win32' == 1 then
   vim.opt.shellquote = ''
   vim.opt.shellxquote = ''
 
+  -- vim.opt.shellslash = true
+
   vim.opt.termguicolors = true
 end
 
@@ -361,26 +363,26 @@ require('lazy').setup({
   },
 
   -- Gitlab plugin
-  {
-    'harrisoncramer/gitlab.nvim',
-    dependencies = {
-      'MunifTanjim/nui.nvim',
-      'nvim-lua/plenary.nvim',
-      'sindrets/diffview.nvim',
-      'stevearc/dressing.nvim', -- Recommended but not required. Better UI for pickers.
-      'nvim-tree/nvim-web-devicons', -- Recommended but not required. Icons in discussion tree.
-    },
-    build = function()
-      require('gitlab.server').build(true)
-    end, -- Builds the Go binary
-    config = function()
-      require('gitlab').setup {
-        -- log_path = vim.fn.stdpath("cache") .. "/gitlab.nvim.log",
-        log_path = '~/gitlab.nvim.log',
-        -- config_path = nil,
-      }
-    end,
-  },
+  -- {
+  --   'harrisoncramer/gitlab.nvim',
+  --   dependencies = {
+  --     'MunifTanjim/nui.nvim',
+  --     'nvim-lua/plenary.nvim',
+  --     'sindrets/diffview.nvim',
+  --     'stevearc/dressing.nvim', -- Recommended but not required. Better UI for pickers.
+  --     'nvim-tree/nvim-web-devicons', -- Recommended but not required. Icons in discussion tree.
+  --   },
+  --   build = function()
+  --     require('gitlab.server').build(true)
+  --   end, -- Builds the Go binary
+  --   config = function()
+  --     require('gitlab').setup {
+  --       -- log_path = vim.fn.stdpath("cache") .. "/gitlab.nvim.log",
+  --       log_path = '~/gitlab.nvim.log',
+  --       -- config_path = nil,
+  --     }
+  --   end,
+  -- },
 
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
   --
@@ -1299,7 +1301,7 @@ require('lazy').setup({
     },
   },
 
-  { 'pablopunk/pi.nvim' },
+  { 'InfestMex/pi.nvim', opts = {} },
 
   {
     'kkrampis/codex.nvim',
