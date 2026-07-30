@@ -11,9 +11,9 @@ local function run_sh_file_to_log_buffer(file_path_arg)
     return
   end
 
-  -- Get the full path of the current file and escape it for the shell.
-  local file_path = file_path_arg or vim.fn.expand '%:p'
-  local git_bash_path = vim.fn.fnameescape(file_path)
+  -- Get the full path of the current file.
+  -- DO NOT use fnameescape here, because it adds Windows escapes (\) that break Bash.
+  local git_bash_path = file_path_arg or vim.fn.expand '%:p'
 
   -- Create a new scratch buffer to display the log output.
   -- This buffer will not be saved and will have the 'log' filetype.
@@ -30,30 +30,45 @@ local function run_sh_file_to_log_buffer(file_path_arg)
   local header = string.format('--- Running %s ---\n', vim.fn.expand '%:t')
   -- vim.api.nvim_buf_set_lines(log_buf_id, 0, 0, false, { header })
 
+  -- Helper function to sanitize lines and remove hidden carriage returns/newlines
+  local function append_to_buffer(job_id, data)
+    if data then
+      local clean_lines = {}
+      for _, line in ipairs(data) do
+        -- Remove trailing \r (carriage returns) and split any unexpected literal internal newlines
+        local clean_line = string.gsub(line, '\r$', '')
+
+        -- If a line somehow still contains a newline character, split it into separate table items
+        for split_line in string.gmatch(clean_line, '[^\n]+') do
+          table.insert(clean_lines, split_line)
+        end
+
+        -- Handle edge case where a line was entirely empty
+        if clean_line == '' then
+          table.insert(clean_lines, '')
+        end
+      end
+
+      -- Safely write to buffer only if we extracted valid lines
+      if #clean_lines > 0 then
+        vim.api.nvim_buf_set_lines(log_buf_id, -1, -1, false, clean_lines)
+      end
+    end
+  end
+
   -- Asynchronously execute the shell command.
-  -- We capture the job ID and store it in our global variable.
-  running_job_id = vim.fn.jobstart({ 'bash', git_bash_path }, {
-    on_stdout = function(job_id, data, event)
-      -- Append the output lines to the log buffer.
-      -- The job returns an array of lines, so we can directly use it.
-      vim.api.nvim_buf_set_lines(log_buf_id, -1, -1, false, data)
-      -- vim.cmd 'normal! G' -- Scroll to the bottom of the log file
-    end,
-    on_stderr = function(job_id, data, event)
-      -- Append the stderr lines to the log buffer.
-      vim.api.nvim_buf_set_lines(log_buf_id, -1, -1, false, data)
-      -- vim.cmd 'normal! G' -- Scroll to the bottom
-    end,
+  running_job_id = vim.fn.jobstart({ 'C:\\Program Files\\Git\\bin\\bash.exe', git_bash_path }, {
+    on_stdout = append_to_buffer,
+    on_stderr = append_to_buffer,
     on_exit = function(job_id, code, event)
-      -- Append a footer to the log buffer when the job is done.
-      local footer = string.format('\n--- Finished with exit code %s ---', code)
-      -- vim.api.nvim_buf_set_lines(log_buf_id, -1, -1, false, { footer })
-      -- Close the buffer after the script finishes to avoid unsaved changes on exit.
-      vim.api.nvim_buf_delete(log_buf_id, { force = true })
-      -- Clear the global job ID variable when the job is complete.
+      -- Optional: uncomment the lines below if you actually want to see the window close.
+      -- Right now, your code deletes it immediately, meaning you won't see the output logs.
+      -- vim.api.nvim_buf_delete(log_buf_id, { force = true })
       running_job_id = nil
+      print('Bash process finished with exit code: ' .. code)
     end,
   })
+
   if running_job_id ~= nil then
     print('Bash process start with job id:' .. running_job_id)
   end
