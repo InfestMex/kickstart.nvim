@@ -31,6 +31,8 @@ do
   end
 end
 
+local root_dir = require('jdtls.setup').find_root { '.git', 'mvnw', 'gradlew' }
+
 local config = {
   name = 'jdtls',
 
@@ -52,7 +54,7 @@ local config = {
   -- See `:help vim.fs.root`
   -- root_dir = '/home/viaguila/dev/current/git/xstore',
   -- root_dir = vim.fs.root(0, { 'gradlew', '.git', 'git', 'mvnw' }),
-  root_dir = require('jdtls.setup').find_root { '.git', 'mvnw', 'gradlew' },
+  root_dir = root_dir,
 
   -- Here you can configure eclipse.jdt.ls specific settings
   -- See https://github.com/eclipse/eclipse.jdt.ls/wiki/Running-the-JAVA-LS-server-from-the-command-line#initialize-request
@@ -66,7 +68,7 @@ local config = {
         runtimes = {
           {
             name = 'JavaSE-21',
-            path = '/usr/lib/jvm/java-21-openjdk-21.0.9.0.10-2.0.1.el9.x86_64',
+            path = '/usr/lib/jvm/java-21-openjdk-21.0.11.0.10-2.0.1.el9.x86_64',
           },
           {
             name = 'JavaSE-11',
@@ -114,6 +116,19 @@ local config = {
 }
 
 -- require('lspconfig').jdtls.setup(config)
+
+local jdtls_is_running = false
+for _, client in ipairs(vim.lsp.get_clients { name = 'jdtls' }) do
+  if client.config.root_dir == config.root_dir then
+    jdtls_is_running = true
+    break
+  end
+end
+
+if not jdtls_is_running then
+  vim.notify('Starting jdtls for project: ' .. project_name, vim.log.levels.INFO, { title = 'jdtls' })
+  vim.notify('Starting jdtls for root_dir: ' .. root_dir, vim.log.levels.INFO, { title = 'jdtls' })
+end
 
 require('jdtls').start_or_attach(config)
 
