@@ -1,14 +1,13 @@
 -- See `:help vim.lsp.start` for an overview of the supported `config` options.
 
-local current_dir = vim.fn.fnamemodify(vim.fn.getcwd(), ':t')
-local project_name
-if current_dir == 'xstore' then
-  project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':h:h:t')
-else
-  project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':p:h:t')
-end
+local root_dir = require('jdtls.setup').find_root { '.git', 'mvnw', 'gradlew' } or vim.fn.getcwd()
 
--- TODO: if projact_name=xstore, move two folders avobe to get the correct version
+local project_name
+if vim.fn.fnamemodify(root_dir, ':t') == 'xstore' then
+  project_name = vim.fn.fnamemodify(root_dir, ':h:h:t')
+else
+  project_name = vim.fn.fnamemodify(root_dir, ':t')
+end
 
 -- Collect java debug/test bundles (assumes Mason installs)
 local bundles = {}
@@ -31,8 +30,6 @@ do
   end
 end
 
-local root_dir = require('jdtls.setup').find_root { '.git', 'mvnw', 'gradlew' }
-
 local config = {
   name = 'jdtls',
 
@@ -45,7 +42,7 @@ local config = {
   cmd = {
     'jdtls',
     '-configuration',
-    '/home/viaguila/.cache/jdtls/config',
+    '/home/viaguila/.cache/jdtls/config/' .. project_name,
     '-data',
     '/home/viaguila/.cache/jdtls/workspace/' .. project_name,
   },
@@ -61,6 +58,14 @@ local config = {
   -- for a list of options
   settings = {
     java = {
+      import = {
+        gradle = {
+          wrapper = {
+            enabled = true,
+          },
+          arguments = '--no-parallel',
+        },
+      },
       configuration = {
         -- See https://github.com/eclipse/eclipse.jdt.ls/wiki/Running-the-JAVA-LS-server-from-the-command-line#initialize-request
         -- And search for `interface RuntimeOption`
