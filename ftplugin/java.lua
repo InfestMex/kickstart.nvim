@@ -1,14 +1,13 @@
 -- See `:help vim.lsp.start` for an overview of the supported `config` options.
 
-local current_dir = vim.fn.fnamemodify(vim.fn.getcwd(), ':t')
-local project_name
-if current_dir == 'xstore' then
-  project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':h:h:t')
-else
-  project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ':p:h:t')
-end
+local root_dir = require('jdtls.setup').find_root { '.git', 'mvnw', 'gradlew' } or vim.fn.getcwd()
 
--- TODO: if projact_name=xstore, move two folders avobe to get the correct version
+local project_name
+if vim.fn.fnamemodify(root_dir, ':t') == 'xstore' then
+  project_name = vim.fn.fnamemodify(root_dir, ':h:h:t')
+else
+  project_name = vim.fn.fnamemodify(root_dir, ':t')
+end
 
 -- Collect java debug/test bundles (assumes Mason installs)
 local bundles = {}
@@ -43,7 +42,7 @@ local config = {
   cmd = {
     'jdtls',
     '-configuration',
-    '/home/viaguila/.cache/jdtls/config',
+    '/home/viaguila/.cache/jdtls/config/' .. project_name,
     '-data',
     '/home/viaguila/.cache/jdtls/workspace/' .. project_name,
   },
@@ -52,13 +51,21 @@ local config = {
   -- See `:help vim.fs.root`
   -- root_dir = '/home/viaguila/dev/current/git/xstore',
   -- root_dir = vim.fs.root(0, { 'gradlew', '.git', 'git', 'mvnw' }),
-  root_dir = require('jdtls.setup').find_root { '.git', 'mvnw', 'gradlew' },
+  root_dir = root_dir,
 
   -- Here you can configure eclipse.jdt.ls specific settings
   -- See https://github.com/eclipse/eclipse.jdt.ls/wiki/Running-the-JAVA-LS-server-from-the-command-line#initialize-request
   -- for a list of options
   settings = {
     java = {
+      import = {
+        gradle = {
+          wrapper = {
+            enabled = true,
+          },
+          arguments = '--no-parallel',
+        },
+      },
       configuration = {
         -- See https://github.com/eclipse/eclipse.jdt.ls/wiki/Running-the-JAVA-LS-server-from-the-command-line#initialize-request
         -- And search for `interface RuntimeOption`
@@ -66,7 +73,7 @@ local config = {
         runtimes = {
           {
             name = 'JavaSE-21',
-            path = '/usr/lib/jvm/java-21-openjdk-21.0.9.0.10-2.0.1.el9.x86_64',
+            path = '/usr/lib/jvm/java-21-openjdk-21.0.11.0.10-2.0.1.el9.x86_64',
           },
           {
             name = 'JavaSE-11',
@@ -114,6 +121,19 @@ local config = {
 }
 
 -- require('lspconfig').jdtls.setup(config)
+
+local jdtls_is_running = false
+for _, client in ipairs(vim.lsp.get_clients { name = 'jdtls' }) do
+  if client.config.root_dir == config.root_dir then
+    jdtls_is_running = true
+    break
+  end
+end
+
+if not jdtls_is_running then
+  vim.notify('Starting jdtls for project: ' .. project_name, vim.log.levels.INFO, { title = 'jdtls' })
+  vim.notify('Starting jdtls for root_dir: ' .. root_dir, vim.log.levels.INFO, { title = 'jdtls' })
+end
 
 require('jdtls').start_or_attach(config)
 
