@@ -362,6 +362,9 @@ require('lazy').setup({
     },
   },
 
+  -- Diff view, to see GIT
+  { 'sindrets/diffview.nvim' },
+
   -- Gitlab plugin
   -- {
   --   'harrisoncramer/gitlab.nvim',
