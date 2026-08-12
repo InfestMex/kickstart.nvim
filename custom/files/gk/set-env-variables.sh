@@ -24,6 +24,7 @@ export M2_HOME="$SHARED_HOME/TOOLS/mvn/apache-maven-3.6.3"
 export MAVEN_HOME="$M2_HOME"
 # export MAVEN_OPTS="-Xmx3g -XX:MaxPermSize=1g -Dmaven.multiModuleProjectDirectory"
 export MAVEN_OPTS="-Xmx3g -Dmaven.multiModuleProjectDirectory"
+export MAVEN_SETTINGS="$M2_HOME/conf/settings.xml"
 
 # Set other tool paths
 export FD_HOME="/c/DEV_HOME/TOOLS/fd-pc-windows-gnu"
