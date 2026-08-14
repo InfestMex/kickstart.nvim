@@ -2040,6 +2040,7 @@ require 'custom.keymaps'
 require 'custom.runBash'
 require 'custom.containers'
 require 'custom.derby_config'
+require 'custom.log_files'
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
