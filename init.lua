@@ -512,7 +512,7 @@ require('lazy').setup({
         --
         defaults = {
           layout_strategy = 'vertical',
-          file_ignore_patterns = { 'node_modules', '.git/', '%.class' },
+          file_ignore_patterns = { 'node_modules', '/%.git/', '%.class' },
           hidden = true, -- Include hidden files (like .git, .config, etc.)
           no_ignore = true, -- Ignore .gitignore and .fdignore rules
           path_display = {
