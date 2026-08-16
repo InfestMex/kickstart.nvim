@@ -796,10 +796,13 @@ vim.keymap.set('n', '<Leader>rgpm', function()
   -- vertical split
   vim.cmd 'vsp'
 
+  -- The command you want to run after .bashrc loads
+  local command_to_run = 'echo "use -> mvn clean install -Pprd -Dfast"'
+  vim.env.SHARED_HOME = 'C:/DEV_HOME'
+  vim.env.JAVA_HOME = vim.env.SHARED_HOME .. '/TOOLS/java/1.8.0_111'
+
   -- call the terminal with Vars
   vim.cmd 'terminal'
-  -- The command you want to run after .bashrc loads
-  local command_to_run = 'source ~/AppData/Local/nvim/custom/files/gk/CMX/set-project-env-variables.sh'
 
   vim.notify('Running command = ' .. command_to_run, vim.log.levels.INFO, { title = 'GK commands' })
 
