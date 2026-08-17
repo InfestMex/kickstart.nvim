@@ -18,8 +18,10 @@ local function run_sh_file_to_log_buffer(file_path_arg)
   -- Create a new scratch buffer to display the log output.
   -- This buffer will not be saved and will have the 'log' filetype.
   local log_buf_id = vim.api.nvim_create_buf(true, false)
-  vim.api.nvim_buf_set_option(log_buf_id, 'buflisted', false)
-  vim.api.nvim_buf_set_option(log_buf_id, 'filetype', 'log')
+  vim.bo[log_buf_id].buftype = 'nofile'
+  vim.bo[log_buf_id].bufhidden = 'hide'
+  vim.bo[log_buf_id].swapfile = false
+  vim.bo[log_buf_id].filetype = 'log'
   -- vim.api.nvim_buf_set_name(log_buf_id, '*run.log*')
 
   -- Split the window vertically and set the newly created log buffer.
@@ -57,7 +59,7 @@ local function run_sh_file_to_log_buffer(file_path_arg)
   end
 
   -- Asynchronously execute the shell command.
-  running_job_id = vim.fn.jobstart({ 'C:\\Program Files\\Git\\bin\\bash.exe', git_bash_path }, {
+  running_job_id = vim.fn.jobstart({ 'cmd.exe', '/c', git_bash_path }, {
     on_stdout = append_to_buffer,
     on_stderr = append_to_buffer,
     on_exit = function(job_id, code, event)
@@ -111,8 +113,15 @@ vim.keymap.set(
   'n', -- Normal mode
   '<leader>rgpp', -- The key sequence (e.g., \sh with default leader)
   function()
+    -- Pass the required flag to Java automatically via environment variable
+    vim.env.JDK_JAVA_OPTIONS = '--add-opens=java.base/java.lang=ALL-UNNAMED'
+
     local run_pos_file = vim.fn.stdpath 'config' .. '/custom/files/gk/CMX/POS_sandbox__0037.sh'
-    run_sh_file_to_log_buffer(run_pos_file)
+    local run_pos_folder = 'c:/DEV_HOME/CMX/ws-pos/git/pos/build/pos-full/pos-full-sandbox/_sandbox__0037/'
+    local run_pos_cmd = 'run_tpos.cmd'
+    local full_cmd = run_pos_file .. ' && cd ' .. run_pos_folder .. ' && ' .. run_pos_cmd
+
+    run_sh_file_to_log_buffer(full_cmd)
   end,
   { silent = true, desc = '[R]un [G]K [P]PG [P]os' }
 )

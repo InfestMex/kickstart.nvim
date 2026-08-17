@@ -14,6 +14,7 @@ export JAVA_HOME="$SHARED_HOME/TOOLS/java/1.8.0_111"
 # Convert backslashes to forward slashes for the Java URI
 export DEV_HOME="${DEV_HOME//\\//}"
 export MAVEN_SETTINGS="/c/DEV_HOME/TOOLS/mvn/apache-maven-3.6.3/conf/settings.xml"
+mvn clean install -Dfast -o -f C:/DEV_HOME/CMX/ws-pos/git/pos/service/mod-payment-service-cst//pom.xml
 mvn clean install -Dfast -o -f C:/DEV_HOME/CMX/ws-pos/git/pos/client/mod-functions-client-cst/pom.xml
 mvn clean install -Dfast -o -f C:/DEV_HOME/CMX/ws-pos/git/pos/build/pos-full/pos-full-deployment/pom.xml
 cp C:/DEV_HOME/CMX/ws-pos/git/pos/build/pos-full/pos-full-deployment/target/assembly-prep/lib_cst/* C:/DEV_HOME/CMX/ws-pos/git/pos/build/pos-full/pos-full-sandbox/_sandbox__0037/lib_cst/
@@ -28,8 +29,8 @@ cd "$(dirname "$0")"
 cd /c/DEV_HOME/CMX/ws-pos/git/pos/build/pos-full/pos-full-sandbox/_sandbox__0037/
 
 # Run the POS
-echo "Running run_tpos.cmd..."
-./run_tpos.cmd
+# echo "Running run_tpos.cmd..."
+# ./run_tpos.cmd
 
 RETURN_CODE=$?
 echo "Script execution completed with return code: $RETURN_CODE"
