@@ -16,17 +16,15 @@ do
   local mason = vim.fn.stdpath 'data' .. '/mason/packages'
 
   -- java-debug-adapter (nvim-dap support)
-  local java_debug_jar = vim.fn.glob(mason .. '/java-debug-adapter/extension/server/com.microsoft.java.debug.plugin-*.jar', 1)
-  if java_debug_jar ~= nil and java_debug_jar ~= '' then
-    table.insert(bundles, java_debug_jar)
+  local java_debug_jars = vim.fn.glob(mason .. '/java-debug-adapter/extension/server/com.microsoft.java.debug.plugin-*.jar', false, true)
+  if #java_debug_jars > 0 then
+    vim.list_extend(bundles, java_debug_jars)
   end
 
-  -- java-test (optional, adds test runner integration to jdtls)
-  local java_test_jars = vim.fn.glob(mason .. '/java-test/extension/server/*.jar', 1)
-  if java_test_jars ~= nil and java_test_jars ~= '' then
-    for _, jar in ipairs(vim.split(java_test_jars, '\n', { trimempty = true })) do
-      table.insert(bundles, jar)
-    end
+  -- java-test (ONLY load the OSGi plugin jar, ignore test runners and jacoco)
+  local java_test_jars = vim.fn.glob(mason .. '/java-test/extension/server/com.microsoft.java.test.plugin-*.jar', false, true)
+  if #java_test_jars > 0 then
+    vim.list_extend(bundles, java_test_jars)
   end
 end
 
