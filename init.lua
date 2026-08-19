@@ -177,6 +177,9 @@ vim.opt.shiftwidth = 2
 -- ignore white spaces when diff mode
 vim.opt.diffopt:append 'iwhiteall'
 
+-- Force Neovim to catch Ctrl+Space via its fallback code
+vim.keymap.set('i', '<C-S-2>', '<C-Space>', { remap = true })
+
 -- Always use bash style, do not use windows terminal config because bash terminal is expected
 -- if vim.fn.has 'win32' == 1 then
 --   vim.opt.shellcmdflag = '-c'
