@@ -70,6 +70,10 @@ local config = {
         -- The `name` is NOT arbitrary, but must match one of the elements from `enum ExecutionEnvironment` in the link above
         runtimes = {
           {
+            name = 'JavaSE-25',
+            path = '/usr/lib/jvm/java-25-openjdk',
+          },
+          {
             name = 'JavaSE-21',
             path = '/usr/lib/jvm/java-21-openjdk-21.0.11.0.10-2.0.1.el9.x86_64',
           },
