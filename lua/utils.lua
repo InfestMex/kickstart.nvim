@@ -112,7 +112,7 @@ function M.get_java_package_name()
   local content = table.concat(lines, '\n')
 
   -- Regex to find package declaration (e.g., package com.example;)
-  local package_match = string.match(content, 'package%s+([%w%.]+)')
+  local package_match = string.match(content, 'package%s+([%w_%.]+)')
   if package_match then
     local package_name = package_match
     return package_name
