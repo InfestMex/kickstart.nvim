@@ -179,11 +179,13 @@ vim.keymap.set('n', '<Leader>rgem', function()
   -- vertical split
   vim.cmd 'vsp'
 
-  vim.cmd 'terminal'
   -- The command you want to run after .bashrc loads
-  -- local config_path = vim.fn.fnameescape(vim.fn.stdpath 'config')
-  -- local command_to_run = 'source ' .. config_path .. '/custom/files/gk/GXC/set-project-env-variables.sh'
-  local command_to_run = 'source ~/AppData/Local/nvim/custom/files/gk/EXP/set-project-env-variables.sh'
+  local command_to_run = 'echo "use -> mvn clean install -Pprd -Dfast"'
+  vim.env.SHARED_HOME = 'C:/DEV_HOME'
+  vim.env.JAVA_HOME = vim.env.SHARED_HOME .. '/TOOLS/java/1.8.0_111'
+
+  -- call the terminal with Vars
+  vim.cmd 'terminal'
 
   vim.notify('Running command = ' .. command_to_run, vim.log.levels.INFO, { title = 'GK commands' })
 
@@ -788,8 +790,6 @@ end, {
 })
 
 vim.keymap.set('n', '<Leader>rgpm', function()
-  -- TODO: move this in to a lua logic
-
   -- Ensure bash terminal configuration
   vim.cmd 'setlocal shellcmdflag=-c'
 
@@ -820,6 +820,7 @@ vim.keymap.set('n', '<Leader>rgpm', function()
   -- which usually makes this reliable.
   vim.fn.feedkeys(keys, 't')
 end, { desc = 'CMX - Start MVN Shell', noremap = true, silent = true })
+
 vim.keymap.set('n', '<Leader>rgpsa', function()
   local config_path = vim.fn.stdpath 'config'
   -- vim.notify('Config folder = ' .. config_path, vim.log.levels.WARN, { title = 'GK commands' })
@@ -855,31 +856,87 @@ end, { desc = 'CMX - Fix servers wars', noremap = true, silent = true })
 function get_test_runner(project_name, test_name, debug)
   if not test_name or test_name == '' then
     vim.notify('Test name is missing!', vim.log.levels.WARN, { title = 'Test Runner' })
-    return nil -- or an empty string "", or a default command
+    return nil
   end
 
-  -- TODO: Debug logic is missing
+  local executable = ''
+  local args = {}
 
-  -- Define the program and its arguments as a list (table)
-  local executable = './gradlew'
-  local args = {
-    project_name .. ':test',
-    '--info',
-    '--rerun-tasks',
-    '--tests',
-    test_name,
-  }
+  -- Get the directory of the currently open file
+  local current_file_dir = vim.fs.dirname(vim.api.nvim_buf_get_name(0))
 
-  -- Let Neovim escape each part correctly for the current shell
-  local escaped_executable = vim.fn.fnameescape(executable)
-  local escaped_args = {}
+  -- Find the closest build files climbing upwards from the current file
+  local closest_pom = vim.fs.find('pom.xml', { upward = true, path = current_file_dir })[1]
+  local closest_gradle = vim.fs.find({ 'build.gradle', 'build.gradle.kts' }, { upward = true, path = current_file_dir })[1]
+
+  -- Detect Build System based on the closest file found
+  local is_maven = closest_pom ~= nil
+  local is_gradle = not is_maven and (closest_gradle ~= nil)
+
+  -- Detect Windows environment
+  local is_windows = vim.fn.has 'win32' == 1 or vim.fn.has 'win64' == 1
+
+  if is_maven then
+    -- Check for wrapper at the workspace root, otherwise fallback to global
+    if vim.fn.filereadable 'mvnw.cmd' == 1 then
+      executable = 'mvnw.cmd'
+    elseif vim.fn.filereadable 'mvnw' == 1 and not is_windows then
+      executable = './mvnw'
+    else
+      executable = 'mvn'
+    end
+
+    args = { 'test', '-Dtest=' .. test_name }
+
+    local module_dir = vim.fs.dirname(closest_pom)
+    local project_folder_name = vim.fs.basename(module_dir) -- Extracts "mod-functions-client-cst"
+
+    if project_folder_name and project_folder_name ~= '' then
+      table.insert(args, '-pl')
+      table.insert(args, project_folder_name)
+    end
+
+    if debug then
+      table.insert(args, '-Dmaven.surefire.debug=-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:5005')
+    end
+  elseif is_gradle then
+    if vim.fn.filereadable 'gradlew.bat' == 1 then
+      executable = 'gradlew.bat'
+    elseif vim.fn.filereadable 'gradlew' == 1 and not is_windows then
+      executable = './gradlew'
+    else
+      executable = 'gradle'
+    end
+
+    args = { 'test', '--info', '--rerun-tasks', '--tests', test_name }
+
+    -- Multi-module targeting: Add -p (project directory) flag pointing to the inner folder
+    local module_dir = vim.fs.dirname(closest_gradle)
+    local relative_module = vim.fn.fnamemodify(module_dir, ':.')
+    if relative_module ~= '.' and relative_module ~= '' then
+      table.insert(args, 1, relative_module)
+      table.insert(args, 1, '-p')
+    end
+
+    if debug then
+      table.insert(args, '--debug-jvm')
+    end
+  else
+    vim.notify('No pom.xml or build.gradle found for this file!', vim.log.levels.ERROR, { title = 'Test Runner' })
+    return nil
+  end
+
+  -- Escape arguments correctly based on the operating system (Windows vs Unix)
+  local tf_args = {}
   for _, arg in ipairs(args) do
-    table.insert(escaped_args, vim.fn.shellescape(arg))
+    if is_windows then
+      table.insert(tf_args, '"' .. arg .. '"')
+    else
+      table.insert(tf_args, vim.fn.shellescape(arg))
+    end
   end
 
-  -- Join them into a final command string
-  local command = table.concat(vim.list_extend({ escaped_executable }, escaped_args), ' ')
-
+  local command = executable .. ' ' .. table.concat(tf_args, ' ')
   return command
 end
 
@@ -888,6 +945,7 @@ function run_java_test_method(debug)
   local test_name = utils.get_java_full_method_name '.'
   local project_name = utils.get_java_project_name()
   local test_runner = get_test_runner(project_name, test_name, debug)
+  vim.notify 'setup complete. Prepare to run...'
   if test_runner then
     -- vertical split
     vim.cmd 'sp'
@@ -909,12 +967,13 @@ function run_java_test_class(debug)
   local test_name = utils.get_java_full_class_name()
   local project_name = utils.get_java_project_name()
   local test_runner = get_test_runner(project_name, test_name, debug)
+  vim.notify('setup complete: ' .. test_runner)
   if test_runner then
     -- vertical split
     vim.cmd 'sp'
 
-    -- Ensure bash terminal configuration
-    vim.cmd ':setlocal shellcmdflag=-c'
+    -- Ensure bash terminal configuration (-c for bach... /c for CMD)
+    vim.cmd ':setlocal shellcmdflag=/c'
 
     vim.cmd 'enew' -- Create a new empty buffer
     -- vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer
@@ -944,5 +1003,10 @@ vim.api.nvim_create_autocmd('FileType', {
     vim.keymap.set('n', '<leader>jdm', function()
       run_java_test_method(true) -- Pass 'true' for debug mode
     end, { desc = '[J]ava [D]ebug Test [M]ethod', buffer = true })
+
+    -- Keymap to debug the current JUnit test method
+    vim.keymap.set('n', '<leader>jdc', function()
+      run_java_test_class(true) -- Pass 'true' for debug mode
+    end, { desc = '[J]ava [D]ebug Test [C]lass', buffer = true })
   end,
 })
