@@ -145,7 +145,7 @@ vim.keymap.set('n', '<Leader>rgfm', function()
   -- TODO: move this in to a lua logic
 
   -- Ensure bash terminal configuration
-  vim.cmd 'setlocal shellcmdflag=-c'
+  vim.cmd 'setlocal shellcmdflag=/c'
 
   -- vertical split
   vim.cmd 'vsp'
@@ -174,7 +174,7 @@ end, { desc = 'FBA - Start MVN Shell', noremap = true, silent = true })
 
 vim.keymap.set('n', '<Leader>rgem', function()
   -- Ensure bash terminal configuration
-  vim.cmd 'setlocal shellcmdflag=-c'
+  vim.cmd 'setlocal shellcmdflag=/c'
 
   -- vertical split
   vim.cmd 'vsp'
@@ -224,7 +224,7 @@ vim.keymap.set('n', '<Leader>rgfss', function()
   vim.notify('Command to run = ' .. command_to_run, vim.log.levels.WARN, { title = 'GK commands' })
 
   -- Ensure bash terminal configuration
-  vim.cmd 'setlocal shellcmdflag=-c'
+  vim.cmd 'setlocal shellcmdflag=/c'
 
   -- vertical split
   vim.cmd 'vsp'
@@ -254,7 +254,7 @@ vim.keymap.set('n', '<Leader>rgfsa', function()
   vim.notify('Command to run = ' .. command_to_run, vim.log.levels.WARN, { title = 'GK commands' })
 
   -- Ensure bash terminal configuration
-  vim.cmd 'setlocal shellcmdflag=-c'
+  vim.cmd 'setlocal shellcmdflag=/c'
 
   -- vertical split
   vim.cmd 'vsp'
@@ -272,7 +272,7 @@ vim.keymap.set('n', '<Leader>rgesa', function()
   local script_full_path = config_path .. '/custom/files/gk/EXP/fix_servers_war.bat'
   -- vim.notify('Full path = ' .. script_full_path, vim.log.levels.WARN, { title = 'GK commands' })
 
-  local git_bash_path = vim.fn.fnameescape(script_full_path)
+  local git_bash_path = script_full_path:gsub('\\', '/')
   -- vim.notify('Git-bash path = ' .. git_bash_path, vim.log.levels.WARN, { title = 'GK commands' })
 
   if vim.fn.filereadable(git_bash_path) ~= 1 then
@@ -284,7 +284,7 @@ vim.keymap.set('n', '<Leader>rgesa', function()
   vim.notify('Command to run = ' .. command_to_run, vim.log.levels.WARN, { title = 'GK commands' })
 
   -- Ensure bash terminal configuration
-  vim.cmd 'setlocal shellcmdflag=-c'
+  vim.cmd 'setlocal shellcmdflag=/c'
 
   -- vertical split
   vim.cmd 'vsp'
@@ -314,7 +314,7 @@ vim.keymap.set('n', '<Leader>rgess', function()
   vim.notify('Command to run = ' .. command_to_run, vim.log.levels.WARN, { title = 'GK commands' })
 
   -- Ensure bash terminal configuration
-  vim.cmd 'setlocal shellcmdflag=-c'
+  vim.cmd 'setlocal shellcmdflag=/c'
 
   -- vertical split
   vim.cmd 'vsp'
@@ -329,7 +329,7 @@ vim.keymap.set('n', '<Leader>rggp', function()
   vim.cmd 'sp'
 
   -- Ensure bash terminal configuration
-  vim.cmd 'setlocal shellcmdflag=-c'
+  vim.cmd 'setlocal shellcmdflag=/c'
   -- vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer
   vim.cmd 'terminal "net start "postgresql-x64-16""'
 end, { desc = '[R]un [G]K [G]eneral Start [P]ostgresql service', noremap = true, silent = true })
@@ -477,7 +477,7 @@ vim.keymap.set('n', '<leader>rodum', function()
   vim.notify('Command to run = ' .. command_to_run, vim.log.levels.INFO, { title = 'Oracle commands' })
 
   -- Ensure bash terminal configuration
-  vim.cmd 'setlocal shellcmdflag=-c'
+  vim.cmd 'setlocal shellcmdflag=/c'
 
   -- split
   vim.cmd 'sp'
@@ -511,7 +511,7 @@ vim.keymap.set('n', '<leader>roduo', function()
   vim.notify('Command to run = ' .. command_to_run, vim.log.levels.INFO, { title = 'Oracle commands' })
 
   -- Ensure bash terminal configuration
-  vim.cmd 'setlocal shellcmdflag=-c'
+  vim.cmd 'setlocal shellcmdflag=/c'
 
   -- split
   vim.cmd 'sp'
@@ -545,7 +545,7 @@ vim.keymap.set('n', '<leader>rocae', function()
   vim.notify('Command to run = ' .. command_to_run, vim.log.levels.INFO, { title = 'Oracle commands' })
 
   -- Ensure bash terminal configuration
-  vim.cmd 'setlocal shellcmdflag=-c'
+  vim.cmd 'setlocal shellcmdflag=/c'
 
   -- split
   vim.cmd 'sp'
@@ -579,7 +579,7 @@ vim.keymap.set('n', '<leader>rodco', function()
   vim.notify('Command to run = ' .. command_to_run, vim.log.levels.INFO, { title = 'Oracle commands' })
 
   -- Ensure bash terminal configuration
-  vim.cmd 'setlocal shellcmdflag=-c'
+  vim.cmd 'setlocal shellcmdflag=/c'
 
   -- split
   vim.cmd 'sp'
@@ -613,7 +613,7 @@ vim.keymap.set('n', '<leader>rodcm', function()
   vim.notify('Command to run = ' .. command_to_run, vim.log.levels.INFO, { title = 'Oracle commands' })
 
   -- Ensure bash terminal configuration
-  vim.cmd 'setlocal shellcmdflag=-c'
+  vim.cmd 'setlocal shellcmdflag=/c'
 
   -- split
   vim.cmd 'sp'
@@ -707,7 +707,7 @@ vim.keymap.set('n', '<leader>rcr', function()
   vim.notify('Command to run = ' .. command_to_run, vim.log.levels.WARN, { title = 'Container commands' })
 
   -- Ensure bash terminal configuration
-  vim.cmd 'setlocal shellcmdflag=-c'
+  vim.cmd 'setlocal shellcmdflag=/c'
 
   -- split
   vim.cmd 'sp'
@@ -741,7 +741,7 @@ vim.keymap.set('n', '<leader>rcc', function()
   vim.notify('Command to run = ' .. command_to_run, vim.log.levels.WARN, { title = 'Container commands' })
 
   -- Ensure bash terminal configuration
-  vim.cmd 'setlocal shellcmdflag=-c'
+  vim.cmd 'setlocal shellcmdflag=/c'
 
   -- split
   vim.cmd 'sp'
@@ -775,7 +775,7 @@ vim.keymap.set('n', '<leader>rcs', function()
   vim.notify('Command to run = ' .. command_to_run, vim.log.levels.WARN, { title = 'Container commands' })
 
   -- Ensure bash terminal configuration
-  vim.cmd 'setlocal shellcmdflag=-c'
+  vim.cmd 'setlocal shellcmdflag=/c'
 
   -- split
   vim.cmd 'sp'
@@ -791,7 +791,7 @@ end, {
 
 vim.keymap.set('n', '<Leader>rgpm', function()
   -- Ensure bash terminal configuration
-  vim.cmd 'setlocal shellcmdflag=-c'
+  vim.cmd 'setlocal shellcmdflag=/c'
 
   -- vertical split
   vim.cmd 'vsp'
@@ -841,7 +841,7 @@ vim.keymap.set('n', '<Leader>rgpsa', function()
   vim.notify('Command to run = ' .. command_to_run, vim.log.levels.WARN, { title = 'GK commands' })
 
   -- Ensure bash terminal configuration
-  vim.cmd 'setlocal shellcmdflag=-c'
+  vim.cmd 'setlocal shellcmdflag=/c'
 
   -- vertical split
   vim.cmd 'vsp'
@@ -951,7 +951,7 @@ function run_java_test_method(debug)
     vim.cmd 'sp'
 
     -- Ensure bash terminal configuration
-    vim.cmd ':setlocal shellcmdflag=-c'
+    vim.cmd ':setlocal shellcmdflag=/c'
 
     vim.cmd 'enew' -- Create a new empty buffer
     -- vim.cmd 'setlocal buftype=nofile bufhidden=wipe noswapfile' -- Make it a scratch buffer

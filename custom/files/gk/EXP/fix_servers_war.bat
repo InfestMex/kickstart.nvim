@@ -20,6 +20,7 @@ call :deploy_war "ucon-war" "ses\build\ucon\ucon-war" "tmp4"
 call :deploy_war "launchpad-war" "launchpad\build\launchpad\launchpad-war" "tmp3"
 REM call :deploy_war "launchpad-apps-war" "launchpad\build\launchpad-apps\launchpad-apps-war" "tmp5"
 call :deploy_war "employee-hub-sandbox-war" "employee-hub\build\employee-hub-sandbox-war" "tmp6"
+call :deploy_war "mwb-war" "ses\build\mwb\mwb-war" "tmp9"
 
 echo.
 echo All deployments finished.
