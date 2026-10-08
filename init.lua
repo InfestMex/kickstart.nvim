@@ -622,6 +622,16 @@ require('lazy').setup({
     ---@diagnostic enable: missing-fields
   },
 
+  {
+    'mrcjkb/rustaceanvim',
+    -- To avoid being surprised by breaking changes,
+    -- I recommend you set a version range
+    version = '^9',
+    -- This plugin implements proper lazy-loading (see :h lua-plugin-lazy).
+    -- No need for lazy.nvim to lazy-load it.
+    lazy = false,
+  },
+
   -- LSP Plugins
   {
     -- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
@@ -1319,7 +1329,13 @@ require('lazy').setup({
     },
   },
 
-  { 'InfestMex/pi.nvim', opts = {} },
+  -- { 'InfestMex/pi.nvim', opts = {} },
+  {
+    'saattrupdan/pi-agent.nvim',
+    config = function()
+      require('pi-agent').setup()
+    end,
+  },
 
   {
     'kkrampis/codex.nvim',
