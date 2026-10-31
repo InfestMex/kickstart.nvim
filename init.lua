@@ -632,6 +632,12 @@ require('lazy').setup({
     lazy = false,
   },
 
+  -- {
+  --   'kais-radwan/ascii-mermaid',
+  --   ft = 'markdown',
+  --   opts = {},
+  -- },
+
   -- LSP Plugins
   {
     -- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
@@ -1329,7 +1335,38 @@ require('lazy').setup({
     },
   },
 
-  -- { 'InfestMex/pi.nvim', opts = {} },
+  {
+    'milanglacier/minuet-ai.nvim',
+    config = function()
+      require('minuet').setup {
+        provider = 'openai_fim_compatible',
+        virtualtext = {
+          auto_trigger_ft = { '*' },
+          keymap = {
+            accept = '<A-y>',
+            accept_line = '<A-a>',
+            prev = '<A-[>',
+            next = '<A-]>',
+            dismiss = '<A-e>',
+          },
+        },
+        provider_options = {
+          openai_fim_compatible = {
+            api_key = 'TERM',
+            name = 'Ollama',
+            end_point = 'http://victor-desktop:11434/v1/completions',
+            model = 'qwen2.5-coder:7b',
+            timeout = 15000, -- Give Ollama 15s to load the model on first trigger
+            optional = {
+              max_tokens = 256,
+              top_p = 0.9,
+            },
+          },
+        },
+      }
+    end,
+  },
+
   {
     'saattrupdan/pi-agent.nvim',
     config = function()
