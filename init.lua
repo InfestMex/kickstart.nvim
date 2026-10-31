@@ -235,6 +235,7 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 vim.filetype.add {
   extension = {
     dtx = 'xml', -- This tells Neovim to treat .dtx files as 'xml' filetype
+    mnt = 'csv', -- Open .mnt files with the same filetype and plugins as .csv files
   },
 }
 
@@ -621,6 +622,22 @@ require('lazy').setup({
     opts = {},
     ---@diagnostic enable: missing-fields
   },
+
+  {
+    'mrcjkb/rustaceanvim',
+    -- To avoid being surprised by breaking changes,
+    -- I recommend you set a version range
+    version = '^9',
+    -- This plugin implements proper lazy-loading (see :h lua-plugin-lazy).
+    -- No need for lazy.nvim to lazy-load it.
+    lazy = false,
+  },
+
+  -- {
+  --   'kais-radwan/ascii-mermaid',
+  --   ft = 'markdown',
+  --   opts = {},
+  -- },
 
   -- LSP Plugins
   {
@@ -1319,7 +1336,44 @@ require('lazy').setup({
     },
   },
 
-  { 'InfestMex/pi.nvim', opts = {} },
+  {
+    'milanglacier/minuet-ai.nvim',
+    config = function()
+      require('minuet').setup {
+        provider = 'openai_fim_compatible',
+        virtualtext = {
+          auto_trigger_ft = { '*' },
+          keymap = {
+            accept = '<A-y>',
+            accept_line = '<A-a>',
+            prev = '<A-[>',
+            next = '<A-]>',
+            dismiss = '<A-e>',
+          },
+        },
+        provider_options = {
+          openai_fim_compatible = {
+            api_key = 'TERM',
+            name = 'Ollama',
+            end_point = 'http://victor-desktop:11434/v1/completions',
+            model = 'qwen2.5-coder:7b',
+            timeout = 15000, -- Give Ollama 15s to load the model on first trigger
+            optional = {
+              max_tokens = 256,
+              top_p = 0.9,
+            },
+          },
+        },
+      }
+    end,
+  },
+
+  {
+    'saattrupdan/pi-agent.nvim',
+    config = function()
+      require('pi-agent').setup()
+    end,
+  },
 
   {
     'kkrampis/codex.nvim',
