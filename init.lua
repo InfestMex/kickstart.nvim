@@ -235,6 +235,7 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 vim.filetype.add {
   extension = {
     dtx = 'xml', -- This tells Neovim to treat .dtx files as 'xml' filetype
+    mnt = 'csv', -- Open .mnt files with the same filetype and plugins as .csv files
   },
 }
 
