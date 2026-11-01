@@ -288,18 +288,18 @@ vim.opt.rtp:prepend(lazypath)
 require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
-  {
-    'xiyaowong/transparent.nvim',
-    opts = {
-      extra_groups = { 'NormalFloat', 'FloatBorder', 'SignColumn', 'EndOfBuffer' },
-    },
-    config = function(_, opts)
-      require('transparent').setup(opts)
-      -- vim.cmd 'TransparentEnable'
-      vim.cmd 'TransparentDisable' --This needs to be disable because gruvbox theme
-    end,
-  },
-
+  -- {
+  --   'xiyaowong/transparent.nvim',
+  --   opts = {
+  --     extra_groups = { 'NormalFloat', 'FloatBorder', 'SignColumn', 'EndOfBuffer' },
+  --   },
+  --   config = function(_, opts)
+  --     require('transparent').setup(opts)
+  --     -- vim.cmd 'TransparentEnable'
+  --     vim.cmd 'TransparentDisable' --This needs to be disable because gruvbox theme
+  --   end,
+  -- },
+  --
   -- NOTE: Plugins can also be added by using a table,
   -- with the first argument being the link and the following
   -- keys can be used to configure plugin behavior/loading/etc.
@@ -1128,6 +1128,13 @@ require('lazy').setup({
         -- See :h blink-cmp-config-keymap for defining your own keymap
         preset = 'default',
 
+        -- Show Minuet's AI completion candidates on demand.
+        ['<A-y>'] = {
+          function(cmp)
+            cmp.show { providers = { 'minuet' } }
+          end,
+        },
+
         -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
         --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
       },
@@ -1141,11 +1148,16 @@ require('lazy').setup({
       completion = {
         -- By default, you may press `<c-space>` to show the documentation.
         -- Optionally, set `auto_show = true` to show the documentation after a delay.
-        documentation = { auto_show = false, auto_show_delay_ms = 500 },
+        documentation = {
+          auto_show = true,
+          auto_show_delay_ms = 300,
+          window = { border = 'rounded' },
+        },
+        trigger = { prefetch_on_insert = false },
       },
 
       sources = {
-        default = { 'lsp', 'path', 'snippets', 'lazydev' },
+        default = { 'lsp', 'path', 'snippets', 'lazydev', 'minuet' },
         per_filetype = {
           sql = { 'snippets', 'dadbod', 'buffer' },
           plsql = { 'snippets', 'dadbod', 'buffer' },
@@ -1153,6 +1165,13 @@ require('lazy').setup({
         providers = {
           lazydev = { module = 'lazydev.integrations.blink', score_offset = 100 },
           dadbod = { name = 'Dadbod', module = 'vim_dadbod_completion.blink' },
+          minuet = {
+            name = 'minuet',
+            module = 'minuet.blink',
+            async = true,
+            timeout_ms = 15000,
+            score_offset = 50,
+          },
         },
       },
 
@@ -1206,21 +1225,6 @@ require('lazy').setup({
 
   {
     'HiPhish/gradle.nvim',
-  },
-
-  -- A.I.
-  {
-    'Exafunction/windsurf.nvim',
-    dependencies = {
-      'nvim-lua/plenary.nvim',
-      'hrsh7th/nvim-cmp',
-    },
-    config = function()
-      -- require('codeium').setup {
-      --   virtual_text = { enabled = true, key_bindings = { accept = '<C-a>' } },
-      -- }
-      -- require('codeium').disable()
-    end,
   },
 
   -- render images in vim buffer
@@ -1338,19 +1342,10 @@ require('lazy').setup({
 
   {
     'milanglacier/minuet-ai.nvim',
+    dependencies = { 'hrsh7th/nvim-cmp', 'Saghen/blink.cmp' },
     config = function()
       require('minuet').setup {
         provider = 'openai_fim_compatible',
-        virtualtext = {
-          auto_trigger_ft = { '*' },
-          keymap = {
-            accept = '<A-y>',
-            accept_line = '<A-a>',
-            prev = '<A-[>',
-            next = '<A-]>',
-            dismiss = '<A-e>',
-          },
-        },
         provider_options = {
           openai_fim_compatible = {
             api_key = 'TERM',
