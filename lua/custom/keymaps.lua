@@ -652,9 +652,21 @@ end, {
 
 vim.keymap.set('n', '<leader>yf', ':let @+=expand("%:t")<CR>', { noremap = true, silent = true, desc = 'Copy current file name' })
 
--- Yank current buffer's relative path
+-- Yank current buffer's full path
 vim.keymap.set('n', '<leader>yp', function()
-  local rel = vim.fn.expand '%' -- relative to :pwd
+  local path = vim.fn.expand '%:p'
+  if path == '' then
+    vim.notify('No file name (buffer not associated with a file)', vim.log.levels.WARN)
+    return
+  end
+  vim.fn.setreg('"', path)
+  vim.fn.setreg('+', path) -- system clipboard (requires clipboard support)
+  vim.notify('Yanked: ' .. path)
+end, { desc = 'Yank full file path' })
+
+-- Yank current buffer's path relative to :pwd
+vim.keymap.set('n', '<leader>yr', function()
+  local rel = vim.fn.expand '%:.'
   if rel == '' then
     vim.notify('No file name (buffer not associated with a file)', vim.log.levels.WARN)
     return
