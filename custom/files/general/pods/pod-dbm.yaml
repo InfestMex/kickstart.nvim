@@ -24,20 +24,20 @@ spec:
         fsGroup: 54321
         fsGroupChangePolicy: "OnRootMismatch"
 
-    - name: mssql-db
-      image: mcr.microsoft.com/mssql/server:2022-latest
-      ports:
-        - containerPort: 1433
-          hostPort: 1433
-          protocol: TCP
-      env:
-        - name: ACCEPT_EULA
-          value: Y
-        - name: MSSQL_SA_PASSWORD
-          value: system!SA3
-      volumeMounts:
-        - name: mssql-data
-          mountPath: /var/opt/mssql/data:Z
+    # - name: mssql-db
+    #   image: mcr.microsoft.com/mssql/server:2022-latest
+    #   ports:
+    #     - containerPort: 1433
+    #       hostPort: 1433
+    #       protocol: TCP
+    #   env:
+    #     - name: ACCEPT_EULA
+    #       value: Y
+    #     - name: MSSQL_SA_PASSWORD
+    #       value: system!SA3
+    #   volumeMounts:
+    #     - name: mssql-data
+    #       mountPath: /var/opt/mssql/data:Z
 
 
 
