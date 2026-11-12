@@ -141,6 +141,9 @@ vim.opt.timeoutlen = 300
 vim.opt.splitright = true
 vim.opt.splitbelow = true
 
+-- Global statusline: single statusline at the bottom, enables clean WinSeparator lines between splits
+vim.opt.laststatus = 3
+
 -- Sets how neovim will display certain whitespace characters in the editor.
 --  See `:help 'list'`
 --  and `:help 'listchars'`
@@ -191,6 +194,17 @@ vim.keymap.set('i', '<C-S-2>', '<C-Space>', { remap = true })
 --
 --   vim.opt.termguicolors = true
 -- end
+if vim.fn.has 'win32' == 1 then
+  -- Automatically use PowerShell Core (pwsh) if available, otherwise fall back to Windows PowerShell
+  vim.opt.shell = vim.fn.executable 'pwsh' == 1 and 'pwsh' or 'powershell'
+
+  -- PowerShell execution flags
+  vim.opt.shellcmdflag = '-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command'
+
+  -- Clear quotes so Neovim doesn't double-quote commands passed to PowerShell
+  vim.opt.shellquote = ''
+  vim.opt.shellxquote = ''
+end
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
@@ -254,6 +268,21 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 })
 
 -- My autocommands
+-- Only show cursorline in the currently focused window
+local cursorline_group = vim.api.nvim_create_augroup('ActiveWinCursorLine', { clear = true })
+vim.api.nvim_create_autocmd({ 'WinEnter', 'BufEnter' }, {
+  group = cursorline_group,
+  callback = function()
+    vim.opt_local.cursorline = true
+  end,
+})
+vim.api.nvim_create_autocmd({ 'WinLeave' }, {
+  group = cursorline_group,
+  callback = function()
+    vim.opt_local.cursorline = false
+  end,
+})
+
 -- Add comment command for plsql
 vim.api.nvim_create_autocmd('Filetype', {
   pattern = 'plsql',
@@ -1220,6 +1249,19 @@ require('lazy').setup({
 
       -- vim.cmd.colorscheme 'retrobox'
       vim.cmd.colorscheme 'gruvbox'
+      vim.opt.fillchars = {
+        vert = '│',
+        horiz = '─',
+        horizup = '┴',
+        horizdown = '┬',
+        vertright = '├',
+        vertleft = '┤',
+        verthoriz = '┼',
+      }
+      vim.api.nvim_set_hl(0, 'WinSeparator', {
+        fg = '#d79921',
+        bg = 'NONE',
+      })
     end,
   },
 
@@ -1371,34 +1413,15 @@ require('lazy').setup({
   },
 
   {
-    'kkrampis/codex.nvim',
-    lazy = true,
-    cmd = { 'Codex', 'CodexToggle' }, -- Optional: Load only on command execution
-    keys = {
-      {
-        '<leader>ac', -- Change this to your preferred keybinding
-        function()
-          require('codex').toggle()
-        end,
-        desc = 'Toggle Codex popup or side-panel',
-        mode = { 'n', 't' },
-      },
-    },
+    'pittcat/codex.nvim',
     opts = {
-      keymaps = {
-        toggle = nil, -- Keybind to toggle Codex window (Disabled by default, watch out for conflicts)
-        quit = '<C-q>', -- Keybind to close the Codex window (default: Ctrl + q)
-      }, -- Disable internal default keymap (<leader>cc -> :CodexToggle)
-      border = 'rounded', -- Options: 'single', 'double', or 'rounded'
-      width = 0.8, -- Width of the floating window (0.0 to 1.0)
-      height = 0.8, -- Height of the floating window (0.0 to 1.0)
-      model = nil, -- Optional: pass a string to use a specific model (e.g., 'o3-mini')
-      autoinstall = true, -- Automatically install the Codex CLI if not found
-      panel = false, -- Open Codex in a side-panel (vertical split) instead of floating window
-      status_indicator = {
-        enabled = false, -- Avoid E565 from the plugin's startup-time floating status buffer update
-      },
-      use_buffer = false, -- Capture Codex stdout into a normal buffer instead of a terminal buffer
+      path_format = 'rel', -- "abs", "rel", or "basename"
+      path_prefix = '@',
+    },
+    keys = {
+      { '<leader>cc', '<cmd>CodexToggle<cr>', desc = 'Toggle Codex' },
+      { '<leader>cp', '<cmd>CodexSendPath<cr>', desc = 'Send buffer @path to Codex' },
+      { '<leader>cs', ":'<,'>CodexSendReference<cr>", mode = 'v', desc = 'Send line range @path' },
     },
   },
 
