@@ -141,6 +141,9 @@ vim.opt.timeoutlen = 300
 vim.opt.splitright = true
 vim.opt.splitbelow = true
 
+-- Global statusline: single statusline at the bottom, enables clean WinSeparator lines between splits
+vim.opt.laststatus = 3
+
 -- Sets how neovim will display certain whitespace characters in the editor.
 --  See `:help 'list'`
 --  and `:help 'listchars'`
@@ -265,6 +268,21 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 })
 
 -- My autocommands
+-- Only show cursorline in the currently focused window
+local cursorline_group = vim.api.nvim_create_augroup('ActiveWinCursorLine', { clear = true })
+vim.api.nvim_create_autocmd({ 'WinEnter', 'BufEnter' }, {
+  group = cursorline_group,
+  callback = function()
+    vim.opt_local.cursorline = true
+  end,
+})
+vim.api.nvim_create_autocmd({ 'WinLeave' }, {
+  group = cursorline_group,
+  callback = function()
+    vim.opt_local.cursorline = false
+  end,
+})
+
 -- Add comment command for plsql
 vim.api.nvim_create_autocmd('Filetype', {
   pattern = 'plsql',
@@ -1231,6 +1249,19 @@ require('lazy').setup({
 
       -- vim.cmd.colorscheme 'retrobox'
       vim.cmd.colorscheme 'gruvbox'
+      vim.opt.fillchars = {
+        vert = '│',
+        horiz = '─',
+        horizup = '┴',
+        horizdown = '┬',
+        vertright = '├',
+        vertleft = '┤',
+        verthoriz = '┼',
+      }
+      vim.api.nvim_set_hl(0, 'WinSeparator', {
+        fg = '#d79921',
+        bg = 'NONE',
+      })
     end,
   },
 
