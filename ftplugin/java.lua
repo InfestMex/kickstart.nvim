@@ -9,6 +9,10 @@ else
   project_name = vim.fn.fnamemodify(root_dir, ':t')
 end
 
+-- Eclipse metadata belongs to one checkout, even when project names match.
+local cache_name = project_name .. '-' .. vim.fn.sha256(root_dir):sub(1, 12)
+local cache_dir = vim.fn.stdpath 'cache' .. '/jdtls'
+
 -- Collect java debug/test bundles (assumes Mason installs)
 local bundles = {}
 
@@ -21,10 +25,13 @@ do
     vim.list_extend(bundles, java_debug_jars)
   end
 
-  -- java-test (ONLY load the OSGi plugin jar, ignore test runners and jacoco)
-  local java_test_jars = vim.fn.glob(mason .. '/java-test/extension/server/com.microsoft.java.test.plugin-*.jar', false, true)
-  if #java_test_jars > 0 then
-    vim.list_extend(bundles, java_test_jars)
+  -- Include the test plugin's JUnit/OSGi dependencies, excluding standalone agents/runners.
+  local java_test_jars = vim.fn.glob(mason .. '/java-test/extension/server/*.jar', false, true)
+  local excluded = { 'com.microsoft.java.test.runner-jar-with-dependencies.jar', 'jacocoagent.jar' }
+  for _, jar in ipairs(java_test_jars) do
+    if not vim.tbl_contains(excluded, vim.fn.fnamemodify(jar, ':t')) then
+      table.insert(bundles, jar)
+    end
   end
 end
 
@@ -40,9 +47,9 @@ local config = {
   cmd = {
     'jdtls',
     '-configuration',
-    '/home/viaguila/.cache/jdtls/config/' .. project_name,
+    cache_dir .. '/config/' .. cache_name,
     '-data',
-    '/home/viaguila/.cache/jdtls/workspace/' .. project_name,
+    cache_dir .. '/workspace/' .. cache_name,
   },
 
   -- `root_dir` must point to the root of your project.
@@ -62,6 +69,9 @@ local config = {
             enabled = true,
           },
           arguments = '--no-parallel',
+          -- Gradle 9/JDTLS model queries can resolve other projects without locks.
+          -- Apply the workaround only to IDE imports, including the APT model query.
+          jvmArguments = '-Dorg.gradle.parallel=false',
         },
       },
       configuration = {
@@ -75,11 +85,11 @@ local config = {
           },
           {
             name = 'JavaSE-21',
-            path = '/usr/lib/jvm/java-21-openjdk-21.0.11.0.10-2.0.1.el9.x86_64',
+            path = '/usr/lib/jvm/java-21-openjdk',
           },
           {
             name = 'JavaSE-11',
-            path = '/usr/lib/jvm/java-11-openjdk-11.0.25.0.9-7.0.1.el9.x86_64',
+            path = '/usr/lib/jvm/java-11-openjdk',
           },
         },
       },
@@ -95,7 +105,7 @@ local config = {
           -- profile = 'xstore',
           profile = 'GoogleStyle',
           -- url = 'https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml',
-          url = '~/.config/nvim/custom/files/eclipse-java-google-style.xml',
+          url = vim.fn.stdpath 'config' .. '/custom/files/eclipse-java-google-style.xml',
         },
       },
       inlayHints = {
@@ -121,6 +131,9 @@ local config = {
     bundles = bundles,
   },
 }
+
+-- JDTLS starts importing during initialization, before didChangeConfiguration.
+config.init_options.settings = config.settings
 
 -- require('lspconfig').jdtls.setup(config)
 
