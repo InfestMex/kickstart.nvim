@@ -191,6 +191,17 @@ vim.keymap.set('i', '<C-S-2>', '<C-Space>', { remap = true })
 --
 --   vim.opt.termguicolors = true
 -- end
+if vim.fn.has 'win32' == 1 then
+  -- Automatically use PowerShell Core (pwsh) if available, otherwise fall back to Windows PowerShell
+  vim.opt.shell = vim.fn.executable 'pwsh' == 1 and 'pwsh' or 'powershell'
+
+  -- PowerShell execution flags
+  vim.opt.shellcmdflag = '-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command'
+
+  -- Clear quotes so Neovim doesn't double-quote commands passed to PowerShell
+  vim.opt.shellquote = ''
+  vim.opt.shellxquote = ''
+end
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
