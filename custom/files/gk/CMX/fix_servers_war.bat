@@ -20,6 +20,7 @@ call :deploy_war "cps-war"      "cps\build\cps\cps-war"      "tmp3"
 call :deploy_war "ucon-war"      "ses\build\ucon\ucon-war"      "tmp6"
 call :deploy_war "launchpad-war" "launchpad\build\launchpad\launchpad-war" "tmp7"
 call :deploy_war "launchpad-apps-war" "launchpad-apps\build\launchpad-apps\launchpad-apps-war" "tmp8"
+call :deploy_war "mwb-war" "ses\build\mwb\mwb-war" "tmp13"
 
 echo.
 echo All deployments finished.
